@@ -15,5 +15,9 @@ def symbol():
 def myth():
     return render_template('myth.html', the_title='Tiger in Myth and Legend')
 
+@app.route('/login')
+def login():
+    return "login functions"
+
 if __name__ == '__main__':
     app.run(debug=True)
