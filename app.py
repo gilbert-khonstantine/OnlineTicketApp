@@ -5,7 +5,7 @@ from api.user_login import user_login
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '1808'
+app.config['MYSQL_PASSWORD'] = 'yourpwd'
 app.config['MYSQL_DB'] = 'ticketDB'
 
 mysql = MySQL(app)
