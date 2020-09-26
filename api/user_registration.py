@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Blueprint, request, Response
 import MySQLdb.cursors
-from .validate import validate_user_input, generate_hash, generate_salt
+from .validate import validate_user_registration
+from .utils import generate_hash, generate_salt
 
 def db_write(query, params):
     from app import mysql
@@ -24,7 +25,7 @@ def register_user():
     user_password = request.json["password"]
     user_confirm_password = request.json["confirm_password"]
 
-    if user_password == user_confirm_password and validate_user_input(
+    if user_password == user_confirm_password and validate_user_registration(
         "authentication", email=user_email, password=user_password
     ):
         password_salt = generate_salt()
