@@ -1,6 +1,7 @@
 from flask import Flask, render_template, Blueprint
 from flask_mysqldb import MySQL
 from api.user_login import user_login
+from api.user_registration import user_registration
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -11,6 +12,7 @@ app.config['MYSQL_DB'] = 'ticketDB'
 mysql = MySQL(app)
 
 app.register_blueprint(user_login, url_prefix='/api')
+app.register_blueprint(user_registration, url_prefix='/api')
 # two decorators, same function
 @app.route('/')
 @app.route('/index.html')
