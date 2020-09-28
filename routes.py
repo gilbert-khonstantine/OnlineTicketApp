@@ -15,5 +15,9 @@ def symbol():
 def myth():
     return render_template('myth.html', the_title='Tiger in Myth and Legend')
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html', the_title='My Profile', name='Tiger', username='Tiger01', tokens=50)
+
 if __name__ == '__main__':
     app.run(debug=True)

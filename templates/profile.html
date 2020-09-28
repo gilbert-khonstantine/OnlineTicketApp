@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>{{ the_title }}</h1>
+
+<img alt="Profile Picture" src="/static/images/tiger.jpg">
+
+<ul>
+  <li><a href="{{ url_for('symbol') }}">As a symbol</a></li>
+  <li><a href="{{ url_for('index') }}">Home page</a></li>
+</ul>
+
+<ul style="list-style-type: none;">
+    <li>Name: {{name}}</li>
+    <li>Username: {{username}}</li>
+    <li>Tokens: {{tokens}}</li>
+</ul>
+
+<p>(Go to <a href="https://www.google.com/" target="_blank">Google</a>)</p>
+
+
+{% endblock %}
