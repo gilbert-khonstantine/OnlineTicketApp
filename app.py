@@ -1,14 +1,19 @@
 from flask import Flask, render_template, Blueprint
-from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 from api.user_login import user_login
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'yourpwd'
-app.config['MYSQL_DB'] = 'ticketDB'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
 
-mysql = MySQL(app)
+class Account(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_salt = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return '<Account %r>' % self.id
 
 app.register_blueprint(user_login, url_prefix='/api')
 # two decorators, same function
