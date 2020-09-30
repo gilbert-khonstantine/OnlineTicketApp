@@ -1,10 +1,9 @@
 from flask import Flask, render_template, Blueprint, request, Response, jsonify
-import MySQLdb.cursors
 import jwt
 from hashlib import pbkdf2_hmac
 import os
 
-JWT_SECRET_KEY="SomeRandomSecretPhrase"
+JWT_SECRET_KEY="DanielTechTips!!CZ2006"
 
 def generate_hash(plain_password, password_salt):
     password_hash = pbkdf2_hmac(

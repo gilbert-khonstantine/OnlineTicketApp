@@ -7,36 +7,18 @@ def jwt_identity(payload):
     return user_id
 
 def validate_user_login(email, password):
-    def db_read(query, params=None):
-        from app import mysql
-        cursor = mysql.connection.cursor()
-        if params:
-            cursor.execute(query, params)
-        else:
-            cursor.execute(query)
-
-        entries = cursor.fetchall()
-        cursor.close()
-
-        content = []
-
-        for entry in entries:
-            content.append(entry)
-
-        return content
-
-    current_user = db_read("""SELECT * FROM account WHERE email = %s""", (email,))
-
-    if len(current_user) == 1:
-        print(current_user[0])
-        saved_password_hash = current_user[0][3]
-        saved_password_salt = current_user[0][2]
-        print(saved_password_hash)
-        print(saved_password_salt)
+    from app import Account
+    current_user = Account.query.filter_by(email=str(email)).first_or_404()
+    current_user = {"id":current_user.id,"email":current_user.email,"password_salt":current_user.password_salt,"password_hash":current_user.password_hash}
+    print(current_user)
+    if current_user['id'] >= 0:
+        saved_password_hash = current_user["password_hash"]
+        saved_password_salt = current_user["password_salt"]
         password_hash = generate_hash(password, saved_password_salt)
+        print(password_hash)
 
         if password_hash == saved_password_hash:
-            user_id = current_user[0][0]
+            user_id = current_user["id"]
             jwt_token = generate_jwt_token({"id": user_id,'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=9000), 'iat': datetime.datetime.utcnow(),'nbf': datetime.datetime.utcnow()})
             return jwt_token
         else:

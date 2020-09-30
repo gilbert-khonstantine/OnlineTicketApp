@@ -10,7 +10,10 @@ def login_user():
 
     user_token = validate_user_login(user_email, user_password)
 
+    print("HELLOHELLO")
+    print(user_token)
+
     if user_token:
         return jsonify({"jwt_token": user_token})
     else:
-        Response(status=401)
+        return Response("Invalid Email/Password",status=400)
