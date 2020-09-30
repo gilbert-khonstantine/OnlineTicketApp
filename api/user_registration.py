@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint, request, Response
+from flask import Flask, redirect, Blueprint, request, Response
 from .validate import validate_user_registration
 from .utils import generate_hash, generate_salt
 
@@ -20,7 +20,7 @@ def register_user():
             try:
                 db.session.add(new_user)
                 db.session.commit()
-                return Response("Account created", status=201, mimetype='application/json')
+                return Response("{message:'Account created'}", status=201, mimetype='application/json')
             except:
                 return Response("Email is already exist",status=409)
         else: 
