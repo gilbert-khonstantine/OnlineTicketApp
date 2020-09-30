@@ -84,6 +84,7 @@
             if ("jwt" in localStorage) {
                 console.log("in")
                 window.location.replace("http://localhost:5000/home");
+                // console.log(atob(localStorage.getItem("jwt").split('.')[1])); this is to decode the jwt
             }
         }
         window.onload = checkJWT
