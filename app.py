@@ -26,9 +26,13 @@ app.register_blueprint(user_login, url_prefix='/api')
 app.register_blueprint(user_registration, url_prefix='/api')
 # two decorators, same function
 @app.route('/')
-@app.route('/index.html')
-def index():
-    return render_template('index.html', the_title='Tiger Home Page')
+@app.route('/login')
+def login():
+    return render_template('login.html', the_title='Login')
+
+@app.route('/register')
+def register():
+    return render_template('register.html', the_title='Register')
 
 @app.route('/symbol.html')
 def symbol():
