@@ -80,6 +80,13 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <script>
+        function checkJWT() {
+            if ("jwt" in localStorage) {
+                console.log("in")
+                window.location.replace("http://localhost:5000/home");
+            }
+        }
+        window.onload = checkJWT
         let register = document.querySelector("#register")
         var pwd_err = 0
         var email_err = 0

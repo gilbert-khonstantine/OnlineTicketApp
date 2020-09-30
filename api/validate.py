@@ -19,7 +19,7 @@ def validate_user_login(email, password):
 
         if password_hash == saved_password_hash:
             user_id = current_user["id"]
-            jwt_token = generate_jwt_token({"id": user_id,'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=9000), 'iat': datetime.datetime.utcnow(),'nbf': datetime.datetime.utcnow()})
+            jwt_token = generate_jwt_token({"id": user_id,'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=900000), 'iat': datetime.datetime.utcnow(),'nbf': datetime.datetime.utcnow()})
             return jwt_token
         else:
             return False

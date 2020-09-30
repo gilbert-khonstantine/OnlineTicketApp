@@ -34,13 +34,9 @@ def login():
 def register():
     return render_template('register.html', the_title='Register')
 
-@app.route('/symbol.html')
-def symbol():
-    return render_template('symbol.html', the_title='Tiger As Symbol')
-
-@app.route('/myth.html')
-def myth():
-    return render_template('myth.html', the_title='Tiger in Myth and Legend')
+@app.route('/home')
+def home():
+    return render_template('base.html', the_title='Tiger in Myth and Legend')
 
 @app.route('/test_jwt')
 @jwt_required()
