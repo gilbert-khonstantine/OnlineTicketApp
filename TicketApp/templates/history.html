@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>History</title>
+{% endblock %}
+
+{% block body %}
+    <h2>{{ user.name }}'s Purchase History</h2>
+    <br>
+    <a href="/home"><input type="button" value="Return Home"></a>
+    <a href="/profile"><input type="button" value="Profile"></a>
+    <a href="/favourites"><input type="button" value="Favourites"></a>
+    <a href="/tokens"><input type="button" value="Tokens"></a>
+    <a href="/logout"><input type="button" value="Logout"></a>
+    <br>
+    <h3><strong>History</strong></h3>
+    <br>
+    <h4>{{text}}</h4>
+    <!-- need to display user history -->
+
+{% endblock %}

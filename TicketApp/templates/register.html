@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Create New Account</title>
+{% endblock %}
+
+{% block body %}
+    <h2>Welcome! Register below!</h2>
+
+    <form action="/register" method="POST">
+        <label>Name:</label><br>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required><br>
+        <label>Email:</label><br>
+        <input type="text" id="email" name="email" placeholder="example@example.com" required><br>
+        <label>Password</label><br>
+        <input type="text" id="password" name="password" placeholder="Enter your password" required><br>
+        <input type="submit" value="Register">
+    </form>
+    <a href="/login"><input type="button" value="Cancel"></a>
+
+{% endblock %}
