@@ -31,8 +31,9 @@ class UserInfo(db.Model):
 class UserHist(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    product = db.Column(db.String(255), nullable=True)
-    cost = db.Column(db.Integer, nullable=True)
+    product = db.Column(db.String(255), nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    datecreated = db.Column(db.DateTime, nullable=False)
     def __repr__(self):
         return '<UserHist %r>' % self.id
 
@@ -239,8 +240,13 @@ def history():
     if userID!=0:
         user = User.query.get(userID)
         user_hist = UserHist.query.filter_by(user_id=userID).all()
-        text = "Buy more pls :)"
-        return render_template('history.html', user=user, text=text)
+        data=""
+        if user_hist is not None:
+            if user_hist is not None:
+                for row in user_hist:
+                    data = data + str(row.product) + ',' + str(row.amount) + ',' + str(row.cost) + ','
+                data = data[:-1]
+        return render_template('history.html', user=user, text=text, purHist=data)
     else:
         text = "Please login to an account!"
         return redirect('/login')
