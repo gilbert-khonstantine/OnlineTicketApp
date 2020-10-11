@@ -10,8 +10,12 @@
     <a href="/profile"><input type="button" value="View/Edit Profile"></a>
     <a href=/logout><input type=button value='Logout'></a>
     <br>
-    {{userCart}}
-    <!-- need to display user cart and total price -->
+    <br> Items: {{itemlist}} </br>
+	<br> Shipping: {{shipping}} </br>
+	<br> Pay by: {{payment_method}} </br>
+	<br> Subtotal: {{subtotal}} </br>
+	<br> Discount: {{discount}} </br>
+	<br> Total: {{total}} </br>
     <br>
     <a href=/deduct><input type=button value='Pay!'></a>
 {% endblock %}
