@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 #from makeDB import User, UserFav, UserInfo, UserHist, productlist
 from flask_sqlalchemy import SQLAlchemy
+from api import make_payment
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # suppress warning message
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
 db = SQLAlchemy(app)
 
@@ -31,8 +33,9 @@ class UserInfo(db.Model):
 class UserHist(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    product = db.Column(db.String(255), nullable=True)
-    cost = db.Column(db.Integer, nullable=True)
+    product = db.Column(db.String(255), nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    datecreated = db.Column(db.DateTime, nullable=False)
     def __repr__(self):
         return '<UserHist %r>' % self.id
 
@@ -49,13 +52,42 @@ class UserFav(db.Model):
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
-# List of products
-class ProductList(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product = db.Column(db.String(255), nullable=False)
-    tag = db.Column(db.String(255), nullable=False)
+# Payment info
+class Payment(db.Model):
+    __tablename__ = 'payment'
+    id = db.Column(db.Integer, primary_key=True)
+    payment_items = db.relationship('Item', backref='payment', lazy='dynamic')
+    shipping = db.Column(db.String(100), nullable=False)
+    payment_method = db.Column(db.String(100), nullable=False)
+        
     def __repr__(self):
-        return '<productlist %r>' % self.id
+        return '<Payment %r>' % self.id
+
+# Item info
+class Item(db.Model):
+    __tablename__ = 'item'
+    id = db.Column(db.Integer, primary_key=True)
+    item = db.Column(db.String(100), nullable=False)
+    cost = db.Column(db.Float, nullable=False)
+    payment_id = db.Column(db.Integer, db.ForeignKey('payment.id'))
+        
+    def __repr__(self):
+        return '<Item %r>' % self.id
+
+
+db.create_all()
+
+
+# clear all existing rows in all tables before running new testcases
+def clear_data(session):
+    meta = db.metadata
+    
+    for table in reversed(meta.sorted_tables):
+        print('Clear table %s' % table)
+        session.execute(table.delete())
+        
+    session.commit()
+    
 
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
@@ -239,8 +271,13 @@ def history():
     if userID!=0:
         user = User.query.get(userID)
         user_hist = UserHist.query.filter_by(user_id=userID).all()
-        text = "Buy more pls :)"
-        return render_template('history.html', user=user, text=text)
+        data=""
+        if user_hist is not None:
+            if user_hist is not None:
+                for row in user_hist:
+                    data = data + str(row.product) + ',' + str(row.amount) + ',' + str(row.cost) + ','
+                data = data[:-1]
+        return render_template('history.html', user=user, text=text, purHist=data)
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -248,14 +285,14 @@ def history():
 @app.route('/tokens', methods=['POST','GET'])
 def tokens():
     global text
-    global total
+    global total_tokens
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
         if request.method=="POST":
             value = request.form['amount']
             current = user_info.token
-            total = int(current) + int(value)
+            total_tokens = int(current) + int(value)
             text=''
             return redirect('/bank')
         else:
@@ -267,7 +304,7 @@ def tokens():
 #how to send 2fa???
 @app.route('/bank', methods=['POST','GET'])
 def bank():
-    global total
+    global total_tokens
     global text
     if userID!=0:
         user = User.query.get(userID)
@@ -278,13 +315,13 @@ def bank():
             if len(card_num)==16 and card_num[0]=='4' and int(card_num):
                 if len(twoFA)==3 and int(twoFA):
                     try:
-                        user_info.token=total
+                        user_info.token=total_tokens
                         db.session.commit()
-                        total=0
+                        total_tokens=0
                         text="Tokens added!"
                         return redirect('/tokens')
                     except:
-                        total=0
+                        total_tokens=0
                         text="Transaction failed!"
                         return redirect('/tokens')
                 else:
@@ -323,17 +360,28 @@ def cart():
         text = "Please login to an account!"
         return redirect('/login')
 
-#how tocalculate total price and pass to html logic
+# payment webpage
 @app.route('/payment', methods=['POST','GET'])
 def payment():
-    global text
-    if userID!=0:
-        user = User.query.get(userID)
-        text=""
-        return render_template('payment.html', user=user, userCart=userCart)
+    t = make_payment.payment()
+    user = User.query.get(userID)
+
+    # alternatively, pass tuple t into the html template, then get each variable from the tuple
+    # neater for the return function
+    if t[0]:
+        return render_template('payment.html',
+                               the_title = 'Payment',
+                               itemlist = t[1],
+                               subtotal = t[2],
+                               discount = t[3],
+                               total = t[4],
+                               shipping = t[5],
+                               payment_method = t[6],
+                               user = user)
+    
     else:
-        text = "Please login to an account!"
-        return redirect('/login')
+        print('Insufficient tokens, please top up!')
+        return redirect('/tokens') 
 
 #add deduct token logic here
 @app.route('/deduct')
@@ -364,11 +412,38 @@ def receipt():
     else:
         text = "Please login to an account!"
         return redirect('/login')
+
+
+# put testcases here
+def test():
+    clear_data(db.session)
+
+    temp_item1 = Item(
+        item = 'Nendoroid',
+        cost = 20.06,
+        )
+    temp_item2 = Item(
+        item = 'Nintendo Switch Lite',
+        cost = 256.32,
+        )
+    temp_payment = Payment(
+        payment_items = [temp_item1, temp_item2],
+        shipping = 'Tracked Postage',
+        payment_method = 'PayPal'
+        )
+
+    db.session.add_all([temp_item1, temp_item2, temp_payment])
+    db.session.commit()
+    print(temp_payment.payment_items.count()) # check total items in payment
+    print(temp_payment.id, temp_item1.id, temp_item1.payment_id, temp_item2.id, temp_item2.payment_id) # make sure item id are linked to correct payment id
+    print('testing...')
+
     
 if __name__ == "__main__":
+    test()
     userID = 0
     userCart = ["zoo","help","idk"]
     text = ""
-    total = 0
+    total_tokens = 0
     search = ""
     app.run(debug=True)
