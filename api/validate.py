@@ -34,3 +34,10 @@ def validate_user_registration(input_type, **kwargs):
         else:
             return False
 
+
+def validate_payment(balance):
+    if balance >= 0:
+        return True
+
+    else:
+        return False

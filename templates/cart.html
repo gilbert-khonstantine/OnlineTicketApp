@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Cart</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.each(userCart, function(index, name){
+                $("#result").append(name + " " + '<br>');
+            });
+        });
+    </script> 
+{% endblock %}
+
+<!-- need to find out how to display cart while letting it + and - and clear -->
+
+{% block body %}
+    <h2>{{ user.name }}'s Cart</h2>
+    <a href="/home"><input type=button value="Return Home"></a>
+    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
+    <a href=/logout><input type=button value='Logout'></a>
+    <br>
+    <div id="result"></div>
+    <br>
+    {{userCart}}
+    <br>
+    <form class="form" autocomplete="off" spellcheck="false" action="/cart" method="POST">
+        <label for="name">Search:</label>
+        <input type="text" class="form-control" autofocus="autofocus" name="search">
+        <input type="submit" value="Update cart!"/>
+    </form>
+    <a href=/payment><input type=button value='To payment >'></a>
+{% endblock %}

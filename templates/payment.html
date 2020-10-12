@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Payment</title>
+{% endblock %}
+
+{% block body %}
+    <h2>{{ user.name }}'s Payment</h2>
+    <a href="/home"><input type=button value="Return Home"></a>
+    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
+    <a href=/logout><input type=button value='Logout'></a>
+    <br>
+    <br> Items: {{itemlist}} </br>
+	<br> Shipping: {{shipping}} </br>
+	<br> Pay by: {{payment_method}} </br>
+	<br> Subtotal: {{subtotal}} </br>
+	<br> Discount: {{discount}} </br>
+	<br> Total: {{total}} </br>
+    <br>
+    <a href=/deduct><input type=button value='Pay!'></a>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Receipt</title>
+{% endblock %}
+
+{% block body %}
+    <h2>{{ user.name }}'s Receipt</h2>
+    <a href="/home"><input type=button value="Return Home"></a>
+    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
+    <a href=/logout><input type=button value='Logout'></a>
+    <br>
+    {{text}}
+{% endblock %}

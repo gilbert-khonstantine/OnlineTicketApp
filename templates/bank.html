@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Bank Payment</title>
+{% endblock %}
+
+{% block body %}
+    <h2>{{ user.name }}'s Bank Top-up</h2>
+    <br>
+    <h3><strong>Enter Bank Details</strong></h3>
+    <br>
+    <form name= 'myform' action="" method="POST" onsubmit=''>
+        <label for="name">Enter card number: </label>
+        <input type="text" name="card_num"><br>
+        <label for="name">Enter 2FA: </label>
+        <input type="text" name="twofa"><br>
+        <input type="submit" value="Go!"/>
+    </form>
+    <h4>{{text}}</h4>
+{% endblock %}
