@@ -14,8 +14,15 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
                         Home</a></li>
-                <li class="nav-item "><a class=" nav-link" href="/profile"><span class="fa fa-info fa-lg"></span>
-                        Profile</a></li>
+                <li class="nav-item dropdown"><a class=" nav-link dropdown-toggle" role="button" data-toggle="dropdown"
+                        href="profile"><span class="fa fa-info fa-lg"></span>
+                        Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/favourites">Favourites</a>
+                        <a class="dropdown-item" href="/history">Purchase History</a>
+                        <a class="dropdown-item" href="/tokens">Tokens</a>
+                    </div>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
                         Cart</a>
                 </li>
