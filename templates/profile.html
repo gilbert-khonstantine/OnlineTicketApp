@@ -54,19 +54,45 @@
             <input type="text" class="form-control" autofocus="autofocus" name="password" value="{{ user.password }}"
                 required>
         </div>
+        {% if user_info.age == None or user_info.age == "" %}
+        <div class="form-group">
+            <label for="name">Age:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="age" placeholder="Enter your age">
+        </div>
+        {% else %}
         <div class="form-group">
             <label for="name">Age:</label><br>
             <input type="text" class="form-control" autofocus="autofocus" name="age" value="{{ user_info.age }}">
         </div>
+        {% endif %}
+
+        {% if user_info.age == None or user_info.age == "" %}
+        <div class="form-group">
+            <label for="name">Address:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="address"
+                placeholder="Enter your address">
+        </div>
+        {% else %}
         <div class="form-group">
             <label for="name">Address:</label><br>
             <input type="text" class="form-control" autofocus="autofocus" name="address"
                 value="{{ user_info.address }}">
         </div>
+        {% endif %}
+
+        {% if user_info.age == None or user_info.age == "" %}
+        <div class="form-group">
+            <label for="name">Mobile:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="mobile"
+                placeholder="Enter your phone number">
+        </div>
+        {% else %}
         <div class="form-group">
             <label for="name">Mobile:</label><br>
             <input type="text" class="form-control" autofocus="autofocus" name="mobile" value="{{ user_info.mobile }}">
         </div>
+        {% endif %}
+
         <div class="form-group">
             <input class="btn btn-primary btn-block" type="submit" value="Save!" />
         </div>

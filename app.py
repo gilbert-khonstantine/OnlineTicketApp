@@ -92,6 +92,8 @@ def clear_data(session):
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    print(User.query.all())
+    print(UserInfo.query.all())
     global userID
     global text
     if userID==0:
@@ -146,10 +148,12 @@ def register():
                 db.session.commit()
                 latest_user = User.query.filter_by(email=str(new_email)).first()
                 new_user_info = UserInfo(user_id=latest_user.id)
-                new_user_fav = UserFav(user_id=latest_user.id)
-                new_user_hist = UserHist(user_id=latest_user.id)
                 db.session.add(new_user_info)
+                db.session.commit()
+                new_user_fav = UserFav(user_id=latest_user.id)
                 db.session.add(new_user_fav)
+                db.session.commit()
+                new_user_hist = UserHist(user_id=latest_user.id)
                 db.session.add(new_user_hist)
                 db.session.commit()
                 text = "Account created!"
@@ -185,10 +189,11 @@ def profile():
     global text
     if userID != 0:
         user = User.query.get(userID)
-        user_info = UserInfo.query.filter_by(user_id = userID)
+        print(userID)
+        user_info = UserInfo.query.filter_by(user_id = userID).first()
+        
         print(user_info)
         print(user)
-        print("user_info")
         if request.method == 'POST':
             user.name = request.form['name']
             user.email = request.form['email']
