@@ -311,12 +311,11 @@ def results():
 @app.route('/cart', methods=['POST','GET'])
 def cart():
     global text
-    if userID!=0:
-        user = User.query.get(userID)
-        return render_template('cart.html', user=user, userCart=userCart)
-    else:
-        text = "Please login to an account!"
-        return redirect('/login')
+    user = User.query.get(userID)
+    return render_template('cart.html', user=user, userCart=userCart)
+    # else:
+        # text = "Please login to an account!"
+        # return redirect('/login')
 
 # payment webpage
 @app.route('/payment', methods=['POST','GET'])
