@@ -185,7 +185,10 @@ def profile():
     global text
     if userID != 0:
         user = User.query.get(userID)
-        user_info = UserInfo.query.get(userID)
+        user_info = UserInfo.query.filter_by(user_id = userID)
+        print(user_info)
+        print(user)
+        print("user_info")
         if request.method == 'POST':
             user.name = request.form['name']
             user.email = request.form['email']
@@ -416,7 +419,7 @@ def receipt():
 
 # put testcases here
 def test():
-    clear_data(db.session)
+    # clear_data(db.session)
 
     temp_item1 = Item(
         item = 'Nendoroid',
