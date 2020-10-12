@@ -1,34 +1,103 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>Profile</title>
+<title>Profile</title>
 {% endblock %}
 
 {% block body %}
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
+                        Home</a></li>
+                <li class="nav-item active"><a class=" nav-link" href="#"><span class="fa fa-info fa-lg"></span>
+                        Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                        Cart</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-address-card fa-lg"></span>
+                        Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>C</h2>
+            <hr>
+        </div>
+    </div>
+</div>
+<div class="container">
     <h2>{{ user.name }}'s Account</h2>
-    <br>
-    <a href="/home"><input type="button" value="Return Home"></a>
-    <a href="/favourites"><input type="button" value="Favourites"></a>
-    <a href="/history"><input type="button" value="Purchase History"></a>
-    <a href="/tokens"><input type="button" value="Tokens"></a>
-    <a href="/logout"><input type="button" value="Logout"></a>
-    <br>
+    <a href="/favourites"><input class="btn btn-secondary" type="button" value="Favourites"></a>
+    <a href="/history"><input type="button" class="btn btn-secondary" value="Purchase History"></a>
+    <a href="/tokens"><input type="button" class="btn btn-secondary" value="Tokens"></a>
     <h3><strong>User Info</strong></h3>
     <form class="form" autocomplete="off" spellcheck="false" action="/profile" method="POST">
-        <label for="name">Name:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="name" value="{{ user.name }}" required><br>
-        <label for="name">Email:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="email" value="{{ user.email }}" required><br>
-        <label for="name">Password:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="password" value="{{ user.password }}" required><br>
-        <label for="name">Age:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="age" value="{{ user_info.age }}"><br>
-        <label for="name">Address:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="address" value="{{ user_info.address }}"><br>
-        <label for="name">Mobile:</label><br>
-        <input type="text" class="form-control" autofocus="autofocus" name="mobile" value="{{ user_info.mobile }}"><br>
-        <br>
-        <input type="submit" value="Save!"/>
+        <div class="form-group">
+            <label for="name">Name:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="name" value="{{ user.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="name">Email:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="email" value="{{ user.email }}"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="name">Password:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="password" value="{{ user.password }}"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="name">Age:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="age" value="{{ user_info.age }}">
+        </div>
+        <div class="form-group">
+            <label for="name">Address:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="address"
+                value="{{ user_info.address }}">
+        </div>
+        <div class="form-group">
+            <label for="name">Mobile:</label><br>
+            <input type="text" class="form-control" autofocus="autofocus" name="mobile" value="{{ user_info.mobile }}">
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary btn-block" type="submit" value="Save!" />
+        </div>
     </form>
     <h4>{{text}}</h4>
+</div>
+<!-- <h2>{{ user.name }}'s Account</h2>
+<br>
+<a href="/home"><input type="button" value="Return Home"></a>
+<a href="/favourites"><input type="button" value="Favourites"></a>
+<a href="/history"><input type="button" value="Purchase History"></a>
+<a href="/tokens"><input type="button" value="Tokens"></a>
+<a href="/logout"><input type="button" value="Logout"></a>
+<br>
+<h3><strong>User Info</strong></h3>
+<form class="form" autocomplete="off" spellcheck="false" action="/profile" method="POST">
+    <label for="name">Name:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="name" value="{{ user.name }}" required><br>
+    <label for="name">Email:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="email" value="{{ user.email }}" required><br>
+    <label for="name">Password:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="password" value="{{ user.password }}"
+        required><br>
+    <label for="name">Age:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="age" value="{{ user_info.age }}"><br>
+    <label for="name">Address:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="address" value="{{ user_info.address }}"><br>
+    <label for="name">Mobile:</label><br>
+    <input type="text" class="form-control" autofocus="autofocus" name="mobile" value="{{ user_info.mobile }}"><br>
+    <br>
+    <input type="submit" value="Save!" />
+</form>
+<h4>{{text}}</h4> -->
 {% endblock %}

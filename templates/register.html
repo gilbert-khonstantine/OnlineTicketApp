@@ -1,11 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>Create New Account</title>
+<link rel="stylesheet" type="text/css" href="../static/css/login-register.css">
+<title>Create New Account</title>
 {% endblock %}
 
 {% block body %}
-    <h2>Welcome! Register below!</h2>
+<!-- <h2>Welcome! Register below!</h2>
 
     <form action="/register" method="POST">
         <label>Name:</label><br>
@@ -16,6 +17,58 @@
         <input type="text" id="password" name="password" placeholder="Enter your password" required><br>
         <input type="submit" value="Register">
     </form>
-    <a href="/login"><input type="button" value="Cancel"></a>
+    <a href="/login"><input type="button" value="Cancel"></a> -->
+
+<body class="my-login-page">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="card-wrapper">
+                <div class="card fat">
+                    <div class="card-body">
+                        <h4 class="card-title">Register</h4>
+                        <form action="/register" method="POST">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input id="name" type="text" class="form-control" name="name" required autofocus>
+                                <div class="invalid-feedback">
+                                    What's your name?
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">E-Mail Address</label>
+                                <input id="email" type="email" class="form-control" name="email" required>
+                                <div class="invalid-feedback">
+                                    Your email is invalid
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input id="password" type="password" class="form-control" name="password" required
+                                    data-eye>
+                                <div class="invalid-feedback">
+                                    Password is required
+                                </div>
+                            </div>
+
+                            <div class="form-group m-0">
+                                <button type="submit" class="btn btn-primary btn-block" id="register">
+                                    Register
+                                </button>
+                            </div>
+                            <div class="mt-4 text-center">
+                                Already have an account? <a href="http://localhost:5000/login">Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="footer">
+                    Copyright &copy; 2020 &mdash; DanielTechTips
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 
 {% endblock %}

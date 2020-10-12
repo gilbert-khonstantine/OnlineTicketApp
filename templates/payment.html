@@ -1,11 +1,78 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>Payment</title>
+<title>Payment</title>
 {% endblock %}
 
 {% block body %}
-    <h2>{{ user.name }}'s Payment</h2>
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active"><a class="nav-link" href="#"><span class="fa fa-home fa-lg"></span>
+                        Home</a></li>
+                <li class="nav-item"><a class=" nav-link" href="profile"><span class="fa fa-info fa-lg"></span>
+                        Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                        Cart</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-address-card fa-lg"></span>
+                        Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h3>C</h3>
+            <hr>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2>{{ user.name }}'s Payment Details</h2>
+    <!-- <br> Items: {{itemlist}} </br> -->
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Price ($)</th>
+            </tr>
+        </thead>
+        {% for item in itemlist %}
+        <tr>
+            <td class="c2">{{item[0]}}</td>
+            <td class="c3">{{item[1]}}</td>
+        </tr>
+        {% endfor %}
+        <tr class="table-danger">
+            <td class="c2">Subtotal</td>
+            <td class="c3">{{subtotal}}</td>
+        </tr>
+        <tr class="table-success">
+            <td class="c2">Discount</td>
+            <td class="c3">{{subtotal}}</td>
+        </tr>
+        <tr class="table-danger">
+            <td class="c2">Total</td>
+            <td class="c3">{{total}}</td>
+        </tr>
+        <tr class="table-info">
+            <td class="c2">Shipping</td>
+            <td class="c3">{{shipping}}</td>
+        </tr>
+        <tr class="table-info">
+            <td class="c2">Payment Option</td>
+            <td class="c3">{{payment_method}}</td>
+        </tr>
+    </table>
+    <a href=/deduct><input class="btn btn-primary" type=button value='Pay!'></a>
+</div>
+<!-- <h2>{{ user.name }}'s Payment</h2>
     <a href="/home"><input type=button value="Return Home"></a>
     <a href="/profile"><input type="button" value="View/Edit Profile"></a>
     <a href=/logout><input type=button value='Logout'></a>
@@ -17,5 +84,5 @@
 	<br> Discount: {{discount}} </br>
 	<br> Total: {{total}} </br>
     <br>
-    <a href=/deduct><input type=button value='Pay!'></a>
+    <a href=/deduct><input type=button value='Pay!'></a> -->
 {% endblock %}
