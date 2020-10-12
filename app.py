@@ -195,12 +195,17 @@ def profile():
         print(user_info)
         print(user)
         if request.method == 'POST':
+            print(request.form)
             user.name = request.form['name']
             user.email = request.form['email']
             user.password = request.form['password']
             user_info.age = request.form['age']
             user_info.address = request.form['address']
             user_info.mobile = request.form['mobile']
+            print(user_info)
+            print(user_info.age)
+            print(user_info.address)
+            print(user_info.mobile)
             try:
                 db.session.commit()
                 text="Profile updated!"
