@@ -1,10 +1,20 @@
+
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 #from makeDB import User, UserFav, UserInfo, UserHist, productlist
 from flask_sqlalchemy import SQLAlchemy
 from api import make_payment
+from flask import Flask, render_template, Blueprint
+from api.user_login import user_login
+from api.user_registration import user_registration
+from flask_jwt import JWT, jwt_required, current_identity
+from api.utils import JWT_SECRET_KEY
+from api.validate import validate_user_login, jwt_identity
+from flask_sqlalchemy import SQLAlchemy
+from api.user_login import user_login
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+app.config['SECRET_KEY'] = JWT_SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # suppress warning message
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
 db = SQLAlchemy(app)
@@ -74,9 +84,17 @@ class Item(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
+db = SQLAlchemy(app)
+class Account(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_salt = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
 
+    def __repr__(self):
+        return {"id":self.id,"email":self.email,"password_salt":self.password_salt,"password_hash":self.password_hash}
 db.create_all()
-
+jwt = JWT(app, validate_user_login, jwt_identity)
 
 # clear all existing rows in all tables before running new testcases
 def clear_data(session):
@@ -88,80 +106,17 @@ def clear_data(session):
         
     session.commit()
     
+app.register_blueprint(user_login, url_prefix='/api')
+app.register_blueprint(user_registration, url_prefix='/api')
 
 @app.route('/')
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login')
 def login():
-    global userID
-    global text
-    if userID==0:
-        if request.method == 'POST':
-            login_email = request.form['email']
-            login_password = request.form['password']
-            user_to_login = User.query.filter_by(email=str(login_email)).first()
-            if user_to_login != None:
-                if user_to_login.password == login_password:
-                    userID = str(user_to_login.id)
-                    text = ""
-                    return redirect('/home')
-                else:
-                    text = "Wrong password!"
-                    return render_template('login.html', text=text)
-            else:
-                text = "No account registered!"
-                return render_template('login.html', text=text)
-        else:
-            text=""
-            return render_template('login.html', text=text)
-    else:
-        text = "You're already logged in dude!"
-        return redirect('/home')
+    return render_template('login.html', the_title='Login')
 
-@app.route('/logout')
-def logout():
-    global userID
-    global text
-    global userCart
-    if userID!=0:
-        userID = 0
-        userCart =[]
-        text = "Logged out successfully!"
-        return redirect("/login")
-    else:
-        text = ""
-        return redirect("/login")
-
-#how to check valid email logic
-@app.route('/register', methods=['POST', 'GET'])
+@app.route('/register')
 def register():
-    global text
-    if userID==0:
-        if request.method == 'POST':
-            new_name = request.form['name']
-            new_email = request.form['email']
-            new_password = request.form['password']
-            new_user = User(name=new_name, email=new_email, password=new_password)
-            try:
-                db.session.add(new_user)
-                db.session.commit()
-                latest_user = User.query.filter_by(email=str(new_email)).first()
-                new_user_info = UserInfo(user_id=latest_user.id)
-                new_user_fav = UserFav(user_id=latest_user.id)
-                new_user_hist = UserHist(user_id=latest_user.id)
-                db.session.add(new_user_info)
-                db.session.add(new_user_fav)
-                db.session.add(new_user_hist)
-                db.session.commit()
-                text = "Account created!"
-                return redirect('/login')
-            except:
-                text = "Account creation failed!"
-                return redirect('/login')
-        else:
-            return render_template('register.html', text=text)
-    else:
-        text = "You're already logged in dude!"
-        return redirect('/home')
+    return render_template('register.html', the_title='Register')
 
 @app.route('/home', methods=['POST','GET'])
 def home():

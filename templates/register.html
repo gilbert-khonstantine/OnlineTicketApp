@@ -1,21 +1,149 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block head %}
-    <title>Create New Account</title>
-{% endblock %}
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/css/login-register.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
 
-{% block body %}
-    <h2>Welcome! Register below!</h2>
+<body class="my-login-page">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="card-wrapper">
+                <div class="card fat">
+                    <div class="card-body">
+                        <h4 class="card-title">Register</h4>
+                        <!-- <form class="my-login-validation" novalidate=""> -->
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input id="name" type="text" class="form-control" name="name" required autofocus>
+                            <div class="invalid-feedback">
+                                What's your name?
+                            </div>
+                        </div>
 
-    <form action="/register" method="POST">
-        <label>Name:</label><br>
-        <input type="text" id="name" name="name" placeholder="Enter your name" required><br>
-        <label>Email:</label><br>
-        <input type="text" id="email" name="email" placeholder="example@example.com" required><br>
-        <label>Password</label><br>
-        <input type="text" id="password" name="password" placeholder="Enter your password" required><br>
-        <input type="submit" value="Register">
-    </form>
-    <a href="/login"><input type="button" value="Cancel"></a>
+                        <div class="form-group">
+                            <label for="email">E-Mail Address</label>
+                            <input id="email" type="email" class="form-control" name="email" required>
+                            <div class="invalid-feedback">
+                                Your email is invalid
+                            </div>
+                        </div>
 
-{% endblock %}
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input id="password" type="password" class="form-control" name="password" required data-eye>
+                            <div class="invalid-feedback">
+                                Password is required
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm Password</label>
+                            <input id="confirm_password" type="password" class="form-control" name="confirm_password"
+                                required data-eye>
+                            <div class="invalid-feedback">
+                                Password is required
+                            </div>
+                        </div>
+
+                        <div class="form-group m-0">
+                            <button type="submit" class="btn btn-primary btn-block" id="register">
+                                Register
+                            </button>
+                        </div>
+                        <div class="mt-4 text-center">
+                            Already have an account? <a href="http://localhost:5000/login">Login</a>
+                        </div>
+                        <!-- </form> -->
+                    </div>
+                </div>
+                <div class="footer">
+                    Copyright &copy; 2020 &mdash; DanielTechTips
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script>
+        function checkJWT() {
+            if ("jwt" in localStorage) {
+                console.log("in")
+                window.location.replace("http://localhost:5000/home");
+                // console.log(atob(localStorage.getItem("jwt").split('.')[1])); this is to decode the jwt
+            }
+        }
+        window.onload = checkJWT
+        let register = document.querySelector("#register")
+        var pwd_err = 0
+        var email_err = 0
+        console.log(register)
+        register.addEventListener("click", (e) => {
+            console.log("clicked")
+            let name = document.getElementById("name")
+            let email = document.getElementById("email")
+            let password = document.getElementById("password")
+            let confirm_password = document.getElementById("confirm_password")
+            let registrationData = { "name": name.value, "email": email.value, "password": password.value, "confirm_password": confirm_password.value }
+            console.log(JSON.stringify(registrationData))
+
+            fetch('http://localhost:5000/api/register', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registrationData),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.replace("http://localhost:5000/login");
+                    } else {
+                        if (response.status == 409 && email_err == 0) {
+                            email_err = 1
+                            console.log("email already exist")
+                            let p = document.createElement('p');
+                            p.classList.add('text-danger');
+                            let text = document.createTextNode('Email already exist');
+                            p.appendChild(text);
+                            let input = document.getElementById("email");
+                            input.parentNode.appendChild(p)
+                            console.log(input)
+                        } else if (response.status == 400 && pwd_err == 0) {
+                            pwd_err = 1
+                            let p = document.createElement('p');
+                            p.classList.add('text-danger');
+                            let text = document.createTextNode('Password does not match');
+                            p.appendChild(text);
+                            let input = document.getElementById("password");
+                            input.parentNode.appendChild(p)
+
+                            let p_confirm = document.createElement('p');
+                            p_confirm.classList.add('text-danger');
+                            p_confirm.appendChild(text);
+                            input = document.getElementById("confirm_password");
+                            input.parentNode.appendChild(p_confirm)
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        })
+    </script>
+</body>
+
+</html>
