@@ -117,21 +117,25 @@ def login():
 def register():
     return render_template('register.html', the_title='Register')
 
+@app.route('/logout')
+def logout():
+    return render_template('login.html', the_title='Login')
+
 @app.route('/home', methods=['POST','GET'])
 def home():
     global text
     global search
-    if userID!=0:
-        user = User.query.get(userID)
-        if request.method=='POST':
-            search = request.form['search']
-            return redirect('/results')
-        else:
-            text=""
-            return render_template('home.html', user=user, text=text)
+    # if userID!=0:
+    user = User.query.get(userID)
+    if request.method=='POST':
+        search = request.form['search']
+        return redirect('/results')
     else:
-        text = "Please login to an account!"
-        return redirect('/login')
+        text=""
+        return render_template('home.html', user=user, text=text)
+    # else:
+    #     text = "Please login to an account!"
+    #     return redirect('/login')
 
 #how to check valid email logic
 @app.route('/profile', methods=['POST', 'GET'])
