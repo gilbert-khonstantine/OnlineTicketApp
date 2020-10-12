@@ -34,6 +34,13 @@
     </div>
 </div>
 <div class="container">
+    <div class="row">
+        <ol class="col-12 breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+            <li class="breadcrumb-item active">Favourites</li>
+        </ol>
+    </div>
     <h2>{{ user.name }}'s Favourites</h2>
     <h3><strong>Favourites</strong></h3>
     <form class="form" autocomplete="off" spellcheck="false" action="/favourites" method="POST">
