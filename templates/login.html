@@ -1,127 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layout.html' %}
 
-<head>
-    <link rel="stylesheet" type="text/css" href="../static/css/login-register.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block head %}
+    <title>Login</title>
+{% endblock %}
 
-<body class="my-login-page">
+{% block body %}
+    <h2>Welcome! </h2>
 
-    <section class="h-100">
-        <div class="container h-100">
-            <div class="row justify-content-md-center h-100">
-                <div class="card-wrapper">
-                    <div class="card fat">
-                        <div class="card-body">
-                            <h4 class="card-title">Login</h4>
-                            <!-- <form method="POST" class="my-login-validation" novalidate=""> -->
-                            <div class="form-group">
-                                <label for="email">E-Mail Address</label>
-                                <input id="email" type="email" class="form-control" name="email" value="" required
-                                    autofocus>
-                                <div class="invalid-feedback">
-                                    Email is invalid
-                                </div>
-                            </div>
+    <p>{{ text }}</p>
 
-                            <div class="form-group">
-                                <label for="password">Password
-                                    <a href="forgot.html" class="float-right">
-                                        Forgot Password?
-                                    </a>
-                                </label>
-                                <input id="password" type="password" class="form-control" name="password" required
-                                    data-eye>
-                                <div class="invalid-feedback">
-                                    Password is required
-                                </div>
-                            </div>
-
-                            <div class="form-group m-0">
-                                <button id="login" type="submit" class="btn btn-primary btn-block">
-                                    Login
-                                </button>
-                            </div>
-                            <div class="mt-4 text-center">
-                                Don't have an account? <a href="http://localhost:5000/register">Create One</a>
-                            </div>
-                            <!-- </form> -->
-                        </div>
-                    </div>
-                    <div class="footer">
-                        Copyright &copy; 2020 &mdash; DanielTechTips
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-    <script>
-        function checkJWT() {
-            if ("jwt" in localStorage) {
-                console.log("in")
-                window.location.replace("http://localhost:5000/home");
-            }
-        }
-        window.onload = checkJWT
-        let login = document.querySelector("#login")
-        let err = 0
-        login.addEventListener("click", (e) => {
-            console.log("clicked")
-            let email = document.getElementById("email")
-            let password = document.getElementById("password")
-            let loginData = { "email": email.value, "password": password.value }
-            async function postData() {
-                let data = await fetch('http://localhost:5000/api/login', {
-                    method: 'POST', // or 'PUT'
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginData),
-                })
-                    .then(response => {
-                        return response.json()
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log("ok!")
-                            localStorage.setItem("jwt", response.jwt_token)
-                            window.location.replace("http://localhost:5000/home");
-                        } else {
-                            if (err == 0) {
-                                console.log("not ok!")
-                                err = 1
-                                console.log("email already exist")
-                                let p = document.createElement('p');
-                                p.classList.add('text-danger');
-                                let text = document.createTextNode('Invalid email/password');
-                                p.appendChild(text);
-                                let input = document.getElementById("login");
-                                input.parentNode.appendChild(p)
-                                console.log(input)
-                            }
-                        }
-                    })
-                return data
-            }
-            postData()
-        })
-    </script>
-</body>
-
-</html>
+    <form action="/login" method="POST">
+        <label>Email:</label><br>
+        <input type="text" id="email" name="email" placeholder="Enter your email"><br>
+        <label>Password</label><br>
+        <input type="password" id="password" name="password" placeholder="Enter your password"><br>
+        <input type="submit" value="Login">
+    </form>
+    <a href="/register"><input type="button" value="Create an account"></a>
+{% endblock %}
