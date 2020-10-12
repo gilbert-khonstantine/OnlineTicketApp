@@ -1,5 +1,4 @@
 from flask import Flask, render_template, Blueprint, request, Response, jsonify, make_response
-import MySQLdb.cursors
 from .validate import validate_payment
 
 #make_payment = Blueprint('make_payment', __name__, template_folder='templates')
