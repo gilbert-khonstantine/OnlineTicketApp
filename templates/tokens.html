@@ -69,8 +69,15 @@
         <label for="name">40 tokens</label><br>
         <input type="radio" name="amount" value="50">
         <label for="name">50 tokens</label><br>
-        <input type="radio" name="amount" value=other> <label for="name">Other amount: </label><input type='text'
-            name='other'><br>
+        <input type="radio" name="amount" id="amntother" value=""> <label for="amntother">Other amount: </label> 		
+		<input type="text" name="amntotherSpecify" id="otherAmount" value=""  onchange="addValueToRadioBtn();"><br>
+		<script>  
+		function addValueToRadioBtn() {
+			if (document.getElementById("amntother").checked == true){
+				document.getElementById("amntother").value = document.getElementById("otherAmount").value;
+			}
+		} 
+		</script>
         <input class="btn btn-primary" type="submit" value="Top up!" />
     </form>
     <h4>{{text}}</h4>
