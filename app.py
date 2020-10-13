@@ -1,12 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
-#from makeDB import User, UserFav, UserInfo, UserHist, productlist
 from flask_sqlalchemy import SQLAlchemy
+from api import verify_email
 from api import make_payment
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # suppress warning message
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketapp.db'
 db = SQLAlchemy(app)
 
 # Login info
@@ -33,9 +32,10 @@ class UserInfo(db.Model):
 class UserHist(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    product = db.Column(db.String(255), nullable=False)
-    cost = db.Column(db.Integer, nullable=False)
-    datecreated = db.Column(db.DateTime, nullable=False)
+    product = db.Column(db.String(255), nullable=True)
+    quantity = db.Column(db.Integer, nullable = True)
+    cost = db.Column(db.Integer, nullable=True)
+    datecreated = db.Column(db.DateTime, nullable=True)
     def __repr__(self):
         return '<UserHist %r>' % self.id
 
@@ -74,26 +74,9 @@ class Item(db.Model):
     def __repr__(self):
         return '<Item %r>' % self.id
 
-
-db.create_all()
-
-
-# clear all existing rows in all tables before running new testcases
-def clear_data(session):
-    meta = db.metadata
-    
-    for table in reversed(meta.sorted_tables):
-        print('Clear table %s' % table)
-        session.execute(table.delete())
-        
-    session.commit()
-    
-
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    print(User.query.all())
-    print(UserInfo.query.all())
     global userID
     global text
     if userID==0:
@@ -133,7 +116,6 @@ def logout():
         text = ""
         return redirect("/login")
 
-#how to check valid email logic
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     global text
@@ -142,31 +124,34 @@ def register():
             new_name = request.form['name']
             new_email = request.form['email']
             new_password = request.form['password']
-            new_user = User(name=new_name, email=new_email, password=new_password)
-            try:
-                db.session.add(new_user)
-                db.session.commit()
-                latest_user = User.query.filter_by(email=str(new_email)).first()
-                new_user_info = UserInfo(user_id=latest_user.id)
-                db.session.add(new_user_info)
-                db.session.commit()
-                new_user_fav = UserFav(user_id=latest_user.id)
-                db.session.add(new_user_fav)
-                db.session.commit()
-                new_user_hist = UserHist(user_id=latest_user.id)
-                db.session.add(new_user_hist)
-                db.session.commit()
-                text = "Account created!"
-                return redirect('/login')
-            except:
-                text = "Account creation failed!"
-                return redirect('/login')
+            if verify_email.check_email(new_email):
+                new_user = User(name=new_name, email=new_email, password=new_password)
+                try:
+                    db.session.add(new_user)
+                    db.session.commit()
+                    latest_user = User.query.filter_by(email=str(new_email)).first()
+                    new_user_info = UserInfo(user_id=latest_user.id)
+                    new_user_fav = UserFav(user_id=latest_user.id)
+                    new_user_hist = UserHist(user_id=latest_user.id)
+                    db.session.add(new_user_info)
+                    db.session.add(new_user_fav)
+                    db.session.add(new_user_hist)
+                    db.session.commit()
+                    text = "Account created!"
+                    return redirect('/login')
+                except:
+                    text = "Account creation failed! Unknown error!"
+                    return redirect('/login')
+            else:
+                text = "Invalid email!"
+                return render_template('register.html', text=text)
         else:
             return render_template('register.html', text=text)
     else:
         text = "You're already logged in dude!"
         return redirect('/home')
 
+#in progress
 @app.route('/home', methods=['POST','GET'])
 def home():
     global text
@@ -183,36 +168,70 @@ def home():
         text = "Please login to an account!"
         return redirect('/login')
 
-#how to check valid email logic
 @app.route('/profile', methods=['POST', 'GET'])
 def profile():
     global text
     if userID != 0:
         user = User.query.get(userID)
-        print(userID)
-        user_info = UserInfo.query.filter_by(user_id = userID).first()
-        
-        print(user_info)
-        print(user)
+        user_info = UserInfo.query.get(userID)
         if request.method == 'POST':
-            print(request.form)
-            user.name = request.form['name']
-            user.email = request.form['email']
-            user.password = request.form['password']
-            user_info.age = request.form['age']
-            user_info.address = request.form['address']
-            user_info.mobile = request.form['mobile']
-            print(user_info)
-            print(user_info.age)
-            print(user_info.address)
-            print(user_info.mobile)
-            try:
-                db.session.commit()
-                text="Profile updated!"
-                return render_template('profile.html', user=user, user_info=user_info, text=text)
-            except:
-                text="Update failed!"
-                return render_template('profile.html', user=user, user_info=user_info, text=text)
+            new_name = request.form['name']
+            new_email = request.form['email']
+            new_password = request.form['password']
+            new_age = request.form['age']
+            new_address = request.form['address']
+            new_mobile = request.form['mobile']
+            text=""
+            fail = False
+            if len(new_name) != 0:
+                user.name = new_name
+            else:
+                text = text + "Invalid username, new name not saved!\n"
+                fail = True
+            if user.email == new_email:
+                user.email = new_email
+            else:
+                if verify_email.check_email(new_email):
+                    user.email = new_email
+                else:
+                    text = text + "Invalid email, new email not saved!\n "
+                    fail = True
+            if new_age!="":
+                try:
+                    new_age = int(new_age)
+                    if new_age >= 0 and new_age <= 100: #Acceptable age is 0 to 100
+                        user_info.age = new_age
+                    else:
+                        text = text + "Invalid age, new age not saved!\n "
+                        fail = True
+                except:
+                    text = text + "Invalid age, new age not saved!\n "
+                    fail = True
+            if new_mobile!="":
+                try:
+                    int(new_mobile)
+                    user_info.mobile = new_mobile
+                except:
+                    text = text + "Invalid mobile, new mobile not saved!\n"
+                    fail = True
+            user.password = new_password
+            user_info.address = new_address
+            if not fail:
+                try:
+                    db.session.commit()
+                    text="Profile updated!"
+                    return render_template('profile.html', user=user, user_info=user_info, text=text)
+                except:
+                    text="Unknown error!"
+                    return render_template('profile.html', user=user, user_info=user_info, text=text)
+            else:
+                try:
+                    db.session.commit()
+                    text="Update failed!\n"+text
+                    return render_template('profile.html', user=user, user_info=user_info, text=text)
+                except:
+                    text="Unknown error!"
+                    return render_template('profile.html', user=user, user_info=user_info, text=text)
         else:
             text=""
             return render_template('profile.html', user=user, user_info=user_info, text=text)
@@ -277,7 +296,6 @@ def favourites():
         text = "Please login to an account!"
         return redirect('/login')
 
-#how to change hist into array and pass to html logic
 @app.route('/history', methods=['POST','GET'])
 def history():
     global text
@@ -286,10 +304,9 @@ def history():
         user_hist = UserHist.query.filter_by(user_id=userID).all()
         data=""
         if user_hist is not None:
-            if user_hist is not None:
-                for row in user_hist:
-                    data = data + str(row.product) + ',' + str(row.amount) + ',' + str(row.cost) + ','
-                data = data[:-1]
+            for row in user_hist:
+                data = data + str(row.product) + ',' + str(row.quantity) + ',' + str(row.cost) + ',' + str(row.datecreated) + ','
+            data = data[:-1]
         return render_template('history.html', user=user, text=text, purHist=data)
     else:
         text = "Please login to an account!"
@@ -298,14 +315,14 @@ def history():
 @app.route('/tokens', methods=['POST','GET'])
 def tokens():
     global text
-    global total_tokens
+    global total
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
         if request.method=="POST":
             value = request.form['amount']
             current = user_info.token
-            total_tokens = int(current) + int(value)
+            total = int(current) + int(value)
             text=''
             return redirect('/bank')
         else:
@@ -317,7 +334,7 @@ def tokens():
 #how to send 2fa???
 @app.route('/bank', methods=['POST','GET'])
 def bank():
-    global total_tokens
+    global total
     global text
     if userID!=0:
         user = User.query.get(userID)
@@ -328,13 +345,13 @@ def bank():
             if len(card_num)==16 and card_num[0]=='4' and int(card_num):
                 if len(twoFA)==3 and int(twoFA):
                     try:
-                        user_info.token=total_tokens
+                        user_info.token=total
                         db.session.commit()
-                        total_tokens=0
+                        total=0
                         text="Tokens added!"
                         return redirect('/tokens')
                     except:
-                        total_tokens=0
+                        total=0
                         text="Transaction failed!"
                         return redirect('/tokens')
                 else:
@@ -362,7 +379,7 @@ def results():
         text = "Please login to an account!"
         return redirect('/login')
 
-#how to add and decrease amount of tickets
+#in progress
 @app.route('/cart', methods=['POST','GET'])
 def cart():
     global text
@@ -373,45 +390,33 @@ def cart():
         text = "Please login to an account!"
         return redirect('/login')
 
-# payment webpage
 @app.route('/payment', methods=['POST','GET'])
 def payment():
-    t = make_payment.payment()
-    user = User.query.get(userID)
-
-    # alternatively, pass tuple t into the html template, then get each variable from the tuple
-    # neater for the return function
-    if t[0]:
-        return render_template('payment.html',
-                               the_title = 'Payment',
-                               itemlist = t[1],
-                               subtotal = t[2],
-                               discount = t[3],
-                               total = t[4],
-                               shipping = t[5],
-                               payment_method = t[6],
-                               user = user)
-    
-    else:
-        print('Insufficient tokens, please top up!')
-        return redirect('/tokens') 
-
-#add deduct token logic here
-@app.route('/deduct')
-def deduct():
     global text
     if userID!=0:
-        userInfo = User.query.get(userID)
-        if enough_tokens == True:
-            text = "Tokens deducted! Thank you for your purchase!"
-            return redirect('/receipt')
+        user = User.query.get(userID)
+        user_info = UserInfo.query.get(userID)
+        token = user_info.token
+        t = make_payment.payment(token)
+        text=""
+        if t[0]:
+            return render_template('payment.html',
+                                    the_title = 'Payment',
+                                    itemlist = t[1],
+                                    subtotal = t[2],
+                                    discount = t[3],
+                                    total = t[4],
+                                    shipping = t[5],
+                                    payment_method = t[6],
+                                    user = user)
         else:
-            text = "Insufficient tokens, please top-up!"
-            return redirect('/payment')
+            print('Insufficient tokens, please top up!')
+            return redirect('/tokens')
     else:
         text = "Please login to an account!"
         return redirect('/login')
 
+#in progress
 @app.route('/receipt')
 def receipt():
     global text
@@ -425,38 +430,11 @@ def receipt():
     else:
         text = "Please login to an account!"
         return redirect('/login')
-
-
-# put testcases here
-def test():
-    # clear_data(db.session)
-
-    temp_item1 = Item(
-        item = 'Nendoroid',
-        cost = 20.06,
-        )
-    temp_item2 = Item(
-        item = 'Nintendo Switch Lite',
-        cost = 256.32,
-        )
-    temp_payment = Payment(
-        payment_items = [temp_item1, temp_item2],
-        shipping = 'Tracked Postage',
-        payment_method = 'PayPal'
-        )
-
-    db.session.add_all([temp_item1, temp_item2, temp_payment])
-    db.session.commit()
-    print(temp_payment.payment_items.count()) # check total items in payment
-    print(temp_payment.id, temp_item1.id, temp_item1.payment_id, temp_item2.id, temp_item2.payment_id) # make sure item id are linked to correct payment id
-    print('testing...')
-
     
 if __name__ == "__main__":
-    test()
     userID = 0
     userCart = ["zoo","help","idk"]
     text = ""
-    total_tokens = 0
+    total = 0
     search = ""
     app.run(debug=True)
