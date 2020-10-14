@@ -1,12 +1,26 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
 from api import verify_email
+from api import verify_profile
 from api import make_payment
+from api import send_email
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+
+#Database config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketapp.db'
 db = SQLAlchemy(app)
+
+#Auto-email config
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'danieltechtips2006@gmail.com'
+app.config['MAIL_PASSWORD'] = 'safetyIsNumber1Priority'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail= Mail(app)
 
 # Login info
 class User(db.Model):
@@ -182,42 +196,18 @@ def profile():
             new_address = request.form['address']
             new_mobile = request.form['mobile']
             text=""
+            new_details = (new_name,new_email,new_password,new_age,new_address,new_mobile)
+            user_email = user.email
             fail = False
-            if len(new_name) != 0:
-                user.name = new_name
-            else:
-                text = text + "Invalid username, new name not saved!\n"
-                fail = True
-            if user.email == new_email:
-                user.email = new_email
-            else:
-                if verify_email.check_email(new_email):
-                    user.email = new_email
-                else:
-                    text = text + "Invalid email, new email not saved!\n "
-                    fail = True
-            if new_age!="":
-                try:
-                    new_age = int(new_age)
-                    if new_age >= 0 and new_age <= 100: #Acceptable age is 0 to 100
-                        user_info.age = new_age
-                    else:
-                        text = text + "Invalid age, new age not saved!\n "
-                        fail = True
-                except:
-                    text = text + "Invalid age, new age not saved!\n "
-                    fail = True
-            if new_mobile!="":
-                try:
-                    int(new_mobile)
-                    user_info.mobile = new_mobile
-                except:
-                    text = text + "Invalid mobile, new mobile not saved!\n"
-                    fail = True
-            user.password = new_password
-            user_info.address = new_address
+            fail = verify_profile.check_account(fail,new_details,user_email)
             if not fail:
                 try:
+                    user.name = new_name
+                    user.email = new_email
+                    user.password = new_password
+                    user_info.age = new_age
+                    user_info.address = new_address
+                    user_info.mobile = new_mobile                    
                     db.session.commit()
                     text="Profile updated!"
                     return render_template('profile.html', user=user, user_info=user_info, text=text)
@@ -331,11 +321,11 @@ def tokens():
         text = "Please login to an account!"
         return redirect('/login')
 
-#how to send 2fa???
 @app.route('/bank', methods=['POST','GET'])
 def bank():
     global total
     global text
+    global twofa
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
@@ -343,7 +333,7 @@ def bank():
             card_num = request.form['card_num']
             twoFA =  request.form['twofa']
             if len(card_num)==16 and card_num[0]=='4' and int(card_num):
-                if len(twoFA)==3 and int(twoFA):
+                if twoFA == twofa:
                     try:
                         user_info.token=total
                         db.session.commit()
@@ -361,6 +351,7 @@ def bank():
                 text="Wrong card details"
                 return render_template('bank.html', user=user)
         else:
+            twofa = send_email.send_2fa()
             text=''
             return render_template('bank.html', user=user)
     else:
@@ -437,4 +428,5 @@ if __name__ == "__main__":
     text = ""
     total = 0
     search = ""
+    twofa = ""
     app.run(debug=True)
