@@ -1,12 +1,10 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from api import verify_email
-from api import make_payment
-
-#imports for send email
 from flask_mail import Mail, Message
-import random
-import string
+from api import verify_email
+from api import verify_profile
+from api import make_payment
+from api import send_email
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -23,13 +21,6 @@ app.config['MAIL_PASSWORD'] = 'safetyIsNumber1Priority'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail= Mail(app)
-
-def send_2fa():
-    twoFA = ''.join(random.choices(string.ascii_uppercase + string.digits, k=3))
-    msg = Message('2FA', sender = 'danieltechtips2006@gmail.com', recipients = ['novaiscrap@gmail.com'])
-    msg.body = "Hello, this is your 2FA: " + twoFA
-    mail.send(msg)
-    return twoFA
 
 # Login info
 class User(db.Model):
@@ -205,42 +196,18 @@ def profile():
             new_address = request.form['address']
             new_mobile = request.form['mobile']
             text=""
+            new_details = (new_name,new_email,new_password,new_age,new_address,new_mobile)
+            user_email = user.email
             fail = False
-            if len(new_name) != 0:
-                user.name = new_name
-            else:
-                text = text + "Invalid username, new name not saved!\n"
-                fail = True
-            if user.email == new_email:
-                user.email = new_email
-            else:
-                if verify_email.check_email(new_email):
-                    user.email = new_email
-                else:
-                    text = text + "Invalid email, new email not saved!\n "
-                    fail = True
-            if new_age!="":
-                try:
-                    new_age = int(new_age)
-                    if new_age >= 0 and new_age <= 100: #Acceptable age is 0 to 100
-                        user_info.age = new_age
-                    else:
-                        text = text + "Invalid age, new age not saved!\n "
-                        fail = True
-                except:
-                    text = text + "Invalid age, new age not saved!\n "
-                    fail = True
-            if new_mobile!="":
-                try:
-                    int(new_mobile)
-                    user_info.mobile = new_mobile
-                except:
-                    text = text + "Invalid mobile, new mobile not saved!\n"
-                    fail = True
-            user.password = new_password
-            user_info.address = new_address
+            fail = verify_profile.check_account(fail,new_details,user_email)
             if not fail:
                 try:
+                    user.name = new_name
+                    user.email = new_email
+                    user.password = new_password
+                    user_info.age = new_age
+                    user_info.address = new_address
+                    user_info.mobile = new_mobile                    
                     db.session.commit()
                     text="Profile updated!"
                     return render_template('profile.html', user=user, user_info=user_info, text=text)
@@ -384,7 +351,7 @@ def bank():
                 text="Wrong card details"
                 return render_template('bank.html', user=user)
         else:
-            twofa = send_2fa()
+            twofa = send_email.send_2fa()
             text=''
             return render_template('bank.html', user=user)
     else:
