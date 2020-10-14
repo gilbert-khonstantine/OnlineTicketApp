@@ -87,7 +87,22 @@ class Item(db.Model):
         
     def __repr__(self):
         return '<Item %r>' % self.id
+    
+# Product info
+class Product(db.Model):
+    __tablename__ = 'product'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(1000), nullable=False)
+    price = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(1000), nullable=False)
+    tag = db.Column(db.String(255), nullable=False)
+    image_link = db.Column(db.String(1000), nullable=False)
 
+    def __repr__(self):
+        return '<Product %r>' % self.id
+
+    
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
 def login():
