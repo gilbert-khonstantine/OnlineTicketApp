@@ -10,7 +10,7 @@ def check_email(new_email):
     if len(new_email) == 0:
         return False
 
-    #example@example.com || example@example.sg 
+    #example@example.com || example@example.sg
     regex = '^[a-zA-Z0-9]+[\._]?[a-zA-Z0-9]+[@]\w+[.]\w{2,3}$'
     #example@example.edu.sg || example@example.gov.sg
     regexExtra = '^[a-zA-Z0-9]+[\._]?[a-zA-Z0-9]+[@]\w+[.]\w{2,3}[.]\w{2,3}$'
