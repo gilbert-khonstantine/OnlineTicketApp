@@ -1,20 +1,57 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>Bank Payment</title>
+<title>Bank Payment</title>
 {% endblock %}
 
 {% block body %}
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
+                        Home</a></li>
+                <li class="nav-item dropdown active"><a class=" nav-link dropdown-toggle" role="button"
+                        data-toggle="dropdown" href="/profile"><span class="fa fa-user fa-lg"></span>
+                        Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/profile">Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/favourites">Favourites</a>
+                        <a class="dropdown-item" href="/history">Purchase History</a>
+                        <a class="dropdown-item" href="/tokens">Tokens</a>
+                    </div>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                        Cart</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
+                        Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
     <h2>{{ user.name }}'s Bank Top-up</h2>
     <br>
     <h3><strong>Enter Bank Details</strong></h3>
     <br>
-    <form name= 'myform' action="" method="POST" onsubmit=''>
-        <label for="name">Enter card number: </label>
-        <input type="text" name="card_num"><br>
-        <label for="name">Enter 2FA: </label>
-        <input type="text" name="twofa"><br>
-        <input type="submit" value="Go!"/>
+    <form class="form" name='myform' action="{{ url_for('bank') }}" method="POST" onsubmit=''>
+        <div class="form-group">
+            <label for="name">Enter card number: </label>
+            <input class="form-control" type="text" name="card_num"><br>
+        </div>
+        <div class="form-group">
+            <label for="name">Enter 2FA: </label>
+            <input class="form-control" type="text" name="twofa"><br>
+        </div>
+        <input type="submit" value="Go!" />
     </form>
     <h4>{{text}}</h4>
+</div>
 {% endblock %}

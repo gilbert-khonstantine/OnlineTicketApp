@@ -3,33 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from api import verify_email
 from api import make_payment
 
-#imports for send email
-from flask_mail import Mail, Message
-import random
-import string
-
 app = Flask(__name__)
 app.config["DEBUG"] = True
-
-#Database config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketapp.db'
 db = SQLAlchemy(app)
-
-#Auto-email config
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'danieltechtips2006@gmail.com'
-app.config['MAIL_PASSWORD'] = 'safetyIsNumber1Priority'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail= Mail(app)
-
-def send_2fa():
-    twoFA = ''.join(random.choices(string.ascii_uppercase + string.digits, k=3))
-    msg = Message('2FA', sender = 'danieltechtips2006@gmail.com', recipients = ['novaiscrap@gmail.com'])
-    msg.body = "Hello, this is your 2FA: " + twoFA
-    mail.send(msg)
-    return twoFA
 
 # Login info
 class User(db.Model):
@@ -354,11 +331,11 @@ def tokens():
         text = "Please login to an account!"
         return redirect('/login')
 
+#how to send 2fa???
 @app.route('/bank', methods=['POST','GET'])
 def bank():
     global total
     global text
-    global twofa
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
@@ -366,7 +343,7 @@ def bank():
             card_num = request.form['card_num']
             twoFA =  request.form['twofa']
             if len(card_num)==16 and card_num[0]=='4' and int(card_num):
-                if twoFA == twofa:
+                if len(twoFA)==3 and int(twoFA):
                     try:
                         user_info.token=total
                         db.session.commit()
@@ -384,7 +361,6 @@ def bank():
                 text="Wrong card details"
                 return render_template('bank.html', user=user)
         else:
-            twofa = send_2fa()
             text=''
             return render_template('bank.html', user=user)
     else:
@@ -461,5 +437,4 @@ if __name__ == "__main__":
     text = ""
     total = 0
     search = ""
-    twofa = ""
     app.run(debug=True)
