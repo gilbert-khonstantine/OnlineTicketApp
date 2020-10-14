@@ -110,7 +110,6 @@ def login():
                 text = "No account registered!"
                 return render_template('login.html', text=text)
         else:
-            text=""
             return render_template('login.html', text=text)
     else:
         text = "You're already logged in dude!"
@@ -160,6 +159,7 @@ def register():
                 text = "Invalid email!"
                 return render_template('register.html', text=text)
         else:
+            text=""
             return render_template('register.html', text=text)
     else:
         text = "You're already logged in dude!"
@@ -176,7 +176,6 @@ def home():
             search = request.form['search']
             return redirect('/results')
         else:
-            text=""
             return render_template('home.html', user=user, text=text)
     else:
         text = "Please login to an account!"
@@ -297,6 +296,7 @@ def history():
             for row in user_hist:
                 data = data + str(row.product) + ',' + str(row.quantity) + ',' + str(row.cost) + ',' + str(row.datecreated) + ','
             data = data[:-1]
+        text="Buy more products"
         return render_template('history.html', user=user, text=text, purHist=data)
     else:
         text = "Please login to an account!"
@@ -346,14 +346,14 @@ def bank():
                         return redirect('/tokens')
                 else:
                     text='Wrong 2FA'
-                    return render_template('bank.html', user=user)
+                    return render_template('bank.html', user=user, text=text)
             else:
                 text="Wrong card details"
-                return render_template('bank.html', user=user)
+                return render_template('bank.html', user=user, text=text)
         else:
             twofa = send_email.send_2fa()
             text=''
-            return render_template('bank.html', user=user)
+            return render_template('bank.html', user=user, text=text)
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -401,7 +401,7 @@ def payment():
                                     payment_method = t[6],
                                     user = user)
         else:
-            print('Insufficient tokens, please top up!')
+            text='Insufficient tokens, please top up!'
             return redirect('/tokens')
     else:
         text = "Please login to an account!"
