@@ -42,6 +42,7 @@ df_final = df_temp
 df_final = df_final.append(df_temp2)
 df_final = df_final.append(df_temp3)
 df_final = df_final.reset_index(drop=True) # make the index values correct
+df_final.insert(loc=7, column='View count', value=0) # add view count column
 df_final.to_csv('final_result.csv')
 print(df_final)
 print('Done')
