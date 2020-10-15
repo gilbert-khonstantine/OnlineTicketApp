@@ -15,6 +15,7 @@ class Product(db.Model):
     tag = db.Column(db.String(255), nullable=False)
     subtag = db.Column(db.String(255), nullable=False)
     image_link = db.Column(db.String(1000), nullable=False)
+    view_count = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<Product %r>' % self.id
