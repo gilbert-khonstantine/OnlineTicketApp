@@ -193,7 +193,24 @@ def home():
             search = request.form['search']
             return redirect('/results')
         else:
-            return render_template('home.html', user=user, text=text)
+            top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() #sorting based on view count and select top 12 products
+            print(top12_product[0].view_count)
+            print(top12_product[2].view_count)
+            return render_template('home.html', user=user, text=text, products = top12_product)
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
+@app.route('/update_view_count', methods=['POST'])
+def update_view_count():
+    if userID!=0:
+        user = User.query.get(userID)
+        if request.method=='POST':
+            pid = request.json['product_id']
+            viewed_product = Product.query.filter_by(id=str(pid)).first()
+            viewed_product.view_count = viewed_product.view_count + 1
+            db.session.commit()
+            return {"message":"ok"}
     else:
         text = "Please login to an account!"
         return redirect('/login')
