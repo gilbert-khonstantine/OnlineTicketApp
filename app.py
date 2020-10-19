@@ -5,6 +5,7 @@ from api import verify_email
 from api import verify_profile
 from api import make_payment
 from api import send_email
+from api import search_results
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -382,7 +383,15 @@ def results():
     global search
     if userID!=0:
         user = User.query.get(userID)
-        return render_template('results.html')
+        result = search_results.get_results(search)
+        return render_template('results.html',
+                                word=search,
+                                text="Here are the results",
+                                pid=result[0],
+                                title=result[1],
+                                price=result[2],
+                                duration=result[3],
+                                image=result[4])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -444,6 +453,6 @@ if __name__ == "__main__":
     userCart = ["zoo","help","idk"]
     text = ""
     total = 0
-    search = ""
+    search = 'zoo'
     twofa = ""
     app.run(debug=True)
