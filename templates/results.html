@@ -64,7 +64,7 @@
                 <th scope="col">Image</th>
             </tr>
         </thead>
-        {% for row in pid %}
+        {% for row in range (pid|length) %}
         <tr>
             <td class="c2"><a href="/home">View</a></td>
             <td class="c2">{{pid[row]}}</td>
