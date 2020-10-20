@@ -76,9 +76,10 @@
                 </form> -->
             </div>
         </div>
+		
         <div class="row">
             <div class="col-6">
-                <h3 class="mb-3"> Here is our Favourite Items </h3>
+                <h3 class="mb-3"> Here is our Most Viewed Items </h3>
             </div>
             <div class="col-6 text-right">
                 <a class="btn btn-primary mb-3 mr-1" href="#carouselExampleIndicators2" role="button" data-slide="prev">
@@ -136,7 +137,74 @@
                 </div>
             </div>
         </div>
+		
+		
+		<!-- TESTING-->
+		<div class="row">
+            <div class="col-6">
+                <h3 class="mb-3"> Your Favourite Items </h3>
+            </div>
+            <div class="col-6 text-right">
+                <a class="btn btn-primary mb-3 mr-1" href="#carouselExampleIndicators3" role="button" data-slide="prev">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a class="btn btn-primary mb-3 " href="#carouselExampleIndicators3" role="button" data-slide="next">
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-12">
+                <div id="carouselExampleIndicators3" class="carousel slide" data-ride="carousel">
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <!-- top 3 items -->
+                                {% for k in range(3) %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:300px;"
+                                            src={{fav[k].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{fav[k].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{fav[k].price}}</h6>
+                                            <a href="#" class="card-link">Card link</a>
+                                            <a href="#" id={{"freq_id:%d" %k}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- Iterate the rest 9 Items -->
+                        {% for i in range(3) %}
+                        <div class="carousel-item">
+                            <div class="row">
+                                {% for j in range(3) %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:280px;"
+                                            src={{fav[3*(i+1)+j].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{fav[3*(i+1)+j].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{fav[3*(i+1)+j].price}}</h6>
+                                            <a href="#" class="card-link">Card link</a>
+                                            <a href="#" id={{"freq_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+		
     </div>
+	
+	
+	
     <script>
         function updateViewCount(id) {
             const data = { product_id: id };
