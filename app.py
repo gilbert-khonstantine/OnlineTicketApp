@@ -5,6 +5,7 @@ from api import verify_email
 from api import verify_profile
 from api import make_payment
 from api import send_email
+from random import shuffle
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -193,10 +194,39 @@ def home():
             search = request.form['search']
             return redirect('/results')
         else:
-            top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() #sorting based on view count and select top 12 products
+            top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
             print(top12_product[0].view_count)
             print(top12_product[2].view_count)
-            return render_template('home.html', user=user, text=text, products = top12_product)
+
+            # check for user's chosen tags
+            user = User.query.get(userID)
+            user_fav = UserFav.query.get(userID)
+            temp = user_fav.__table__.columns.keys()[2:] # get column names
+            tag_bool = [getattr(user_fav, tags) for tags in temp] # get tag boolean values from column names
+            tag_list = []
+
+            # corresponding names of tags
+            # will edit UserFav class so no need to append like this
+            for i in range(len(tag_bool)):
+                if i==0 and tag_bool[i] == True:
+                    tag_list.append('Attractions')
+
+                elif i==1 and tag_bool[i] == True:
+                    tag_list.append('Movies')
+
+                elif i==2 and tag_bool[i] == True:
+                    tag_list.append('Museums')
+                    
+            print(temp, tag_bool, tag_list, sep='\n')  
+            
+            # from chosen tags, get 12 favourites randomly to display
+            all_fav = Product.query.filter(Product.tag.in_(tag_list)).all()
+            shuffle(all_fav)
+            fav = all_fav[0:12]
+            print(len(all_fav), *[p for p in fav], sep='\n') 
+            
+                 
+            return render_template('home.html', user=user, text=text, products = top12_product, fav=fav)
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -269,11 +299,11 @@ def favourites():
         user = User.query.get(userID)
         user_fav = UserFav.query.get(userID)
         if request.method == 'POST':
-            if request.form.get('pop'): user_fav.tag1 = True
+            if request.form.get('attractions'): user_fav.tag1 = True
             else: user_fav.tag1 = False
-            if request.form.get('rock'): user_fav.tag2 = True
+            if request.form.get('movies'): user_fav.tag2 = True
             else: user_fav.tag2 = False
-            if request.form.get('indie'): user_fav.tag3 = True
+            if request.form.get('museums'): user_fav.tag3 = True
             else: user_fav.tag3 = False
             if request.form.get('blues'): user_fav.tag4 = True
             else: user_fav.tag4 = False
@@ -282,6 +312,7 @@ def favourites():
             if request.form.get('amusement_park'): user_fav.tag6 = True
             else: user_fav.tag6 = False
             try:
+                print(user_fav.tag1, user_fav.tag2, user_fav.tag3)
                 db.session.commit()
                 if user_fav.tag1 == True: value1 = 'checked'
                 else: value1 = 'unchecked'
