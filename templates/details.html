@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>{{title}}'s Product Details</title>
+{% endblock %}
+
+{% block body %}
+    <h2>{{title}}'s Product Details</h2>
+    <img src={{image}}><br>
+    Description = {{description}}<br>
+    Duration(if it is a movie): {{duration}}<br>
+    Price: {{price}}<br>
+    <button action="add_to_cart({{title}},{{price}})">Add to cart!</button>
+    {{text}}
+{% endblock %}

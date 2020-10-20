@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from sqlalchemy import and_
 from api import verify_email
 from api import verify_profile
 from api import make_payment
@@ -105,7 +106,17 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product %r>' % self.id
 
+class Cart(db.Model):
+    __tablename__ = 'cart'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    product = db.Column(db.String(1000), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
     
+    def __repr__(self):
+        return '<Cart %r>' % self.id
+
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -191,7 +202,8 @@ def home():
     if userID!=0:
         user = User.query.get(userID)
         if request.method=='POST':
-            return redirect('/results')
+            word=request.form['search']
+            return redirect('/results/'+word)
         else:
             return render_template('home.html', user=user, text=text)
     else:
@@ -376,14 +388,14 @@ def bank():
         return redirect('/login')
 
 #in progress
-@app.route('/results', methods=['POST','GET'])
-def results():
+@app.route('/results/<word>', methods=['POST','GET'])
+def results(word):
     global text
-    search = request.args.get("search")
+    search = word
     if userID!=0:
         if request.method=='POST':
             word = request.form['search']
-            return redirect('/results')
+            return render_template('/results/'+word)
         else:
             result = search_results.get_results(search)
             return render_template('results.html',
@@ -396,6 +408,39 @@ def results():
     else:
         text = "Please login to an account!"
         return redirect('/login')
+
+@app.route('/details/<id>', methods=['POST','GET'])
+def details(id):
+    global text
+    product_id = id
+    if userID!=0:
+        result = search_results.get_product(product_id)
+        return render_template('details.html',
+                                word=product_id,
+                                text="Here are the details",
+                                title=result[0],
+                                price=result[1],
+                                duration=result[2],
+                                description=result[3],
+                                image=result[4])
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
+def add_to_cart(title,cost):
+    have = Cart.query.filter(
+            and_(
+                Cart.product.filter(title),
+                Cart.user_id.filter(userID)
+            )
+        ).all()
+    if have is None:
+        newItem = Cart(user_id=userID,product=title,quantity=1,cost=price)
+        db.session.add(newItem)
+    else:
+        have.quantity = have.quantity+1
+    db.session.commit()
+    return render_template('/details/'+title)
 
 #in progress
 @app.route('/cart', methods=['POST','GET'])

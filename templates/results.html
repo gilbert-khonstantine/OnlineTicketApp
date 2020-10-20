@@ -53,6 +53,7 @@
         </ol>
     </div>
     <h2>Search results on {{word}}</h2>
+    {{text}}
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -71,9 +72,7 @@
             <td class="c3">{{price[row]}}</td>
             <td class="c3"><img src={{image[row]}}></td>
             <td class="c3">
-                <div class="form-group">
-                    <input class="btn btn-primary btn-block" type="submit" name="details" value="Click here for more details!" />
-                </div>
+                <a href="/details/{{pid[row]}}">Click for more details</a>
             </td>
         </tr>
         {% endfor %}

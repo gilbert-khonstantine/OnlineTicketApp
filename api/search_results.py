@@ -12,7 +12,6 @@ def get_results(search_word):
     ).all()
 
     length = len(results)
-    print(length)
     id=[]
     title=[]
     price=[]
@@ -23,3 +22,8 @@ def get_results(search_word):
         price.append(results[i].price)
         image.append(results[i].image_link)
     return (id,title,price,image)
+
+def get_product(product_id):
+    from app import db, Product
+    results = Product.query.get(product_id)
+    return(results.title,results.price,results.duration,results.description,results.image_link)
