@@ -191,7 +191,6 @@ def home():
     if userID!=0:
         user = User.query.get(userID)
         if request.method=='POST':
-            search = request.form['search']
             return redirect('/results')
         else:
             return render_template('home.html', user=user, text=text)
@@ -380,18 +379,21 @@ def bank():
 @app.route('/results', methods=['POST','GET'])
 def results():
     global text
-    global search
+    search = request.args.get("search")
     if userID!=0:
-        user = User.query.get(userID)
-        result = search_results.get_results(search)
-        return render_template('results.html',
-                                word=search,
-                                text="Here are the results",
-                                pid=result[0],
-                                title=result[1],
-                                price=result[2],
-                                duration=result[3],
-                                image=result[4])
+        if request.method=='POST':
+            word = request.form['search']
+            return redirect('/results')
+        else:
+            result = search_results.get_results(search)
+            return render_template('results.html',
+                                    word=search,
+                                    text="Here are the results",
+                                    pid=result[0],
+                                    title=result[1],
+                                    price=result[2],
+                                    duration=result[3],
+                                    image=result[4])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -453,6 +455,5 @@ if __name__ == "__main__":
     userCart = ["zoo","help","idk"]
     text = ""
     total = 0
-    search = 'zoo'
     twofa = ""
     app.run(debug=True)
