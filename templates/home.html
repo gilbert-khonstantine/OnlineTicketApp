@@ -104,7 +104,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{products[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{products[k].price}}</h6>
-                                            <a href="#" class="card-link">Card link</a>
+                                            <a href="#" class="card-link">Add to cart</a>
                                             <a href="#" id={{"freq_id:%d" %k}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{products[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{products[3*(i+1)+j].price}}</h6>
-                                            <a href="#" class="card-link">Card link</a>
+                                            <a href="#" class="card-link">Add to cart</a>
                                             <a href="#" id={{"freq_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -167,8 +167,8 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{fav[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[k].price}}</h6>
-                                            <a href="#" class="card-link">Card link</a>
-                                            <a href="#" id={{"fav:%d" %k}} class="card-link">View</a>
+                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#" id={{"fav_id:%d" %k}} class="card-link">View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -187,8 +187,8 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{fav[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[3*(i+1)+j].price}}</h6>
-                                            <a href="#" class="card-link">Card link</a>
-                                            <a href="#" id={{"fav:%d" %(3*(i+1)+j)}} class="card-link">View</a>
+                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#" id={{"fav_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -202,7 +202,6 @@
         </div>
         {% endif %}
     </div>
-
 
 
     <script>
@@ -282,6 +281,66 @@
         console.log(atag11)
         atag11.addEventListener("click", () => {
             updateViewCount("11")
+        })
+		let atag12 = document.getElementById('fav_id:0');
+        console.log(atag12)
+        atag12.addEventListener("click", () => {
+            updateViewCount("12")
+        })
+        let atag13 = document.getElementById('fav_id:1');
+        console.log(atag13)
+        atag13.addEventListener("click", () => {
+            updateViewCount("13")
+        })
+        let atag14 = document.getElementById('fav_id:2');
+        console.log(atag14)
+        atag14.addEventListener("click", () => {
+            updateViewCount("14")
+        })
+        let atag15 = document.getElementById('fav_id:3');
+        console.log(atag15)
+        atag15.addEventListener("click", () => {
+            updateViewCount("15")
+        })
+        let atag16 = document.getElementById('fav_id:4');
+        console.log(atag16)
+        atag16.addEventListener("click", () => {
+            updateViewCount("16")
+        })
+        let atag17 = document.getElementById('fav_id:5');
+        console.log(atag17)
+        atag5.addEventListener("click", () => {
+            updateViewCount("17")
+        })
+        let atag18 = document.getElementById('fav_id:6');
+        console.log(atag18)
+        atag6.addEventListener("click", () => {
+            updateViewCount("18")
+        })
+        let atag19 = document.getElementById('fav_id:7');
+        console.log(atag19)
+        atag19.addEventListener("click", () => {
+            updateViewCount("19")
+        })
+        let atag20 = document.getElementById('fav_id:8');
+        console.log(atag20)
+        atag20.addEventListener("click", () => {
+            updateViewCount("20")
+        })
+        let atag21 = document.getElementById('fav_id:9');
+        console.log(atag21)
+        atag21.addEventListener("click", () => {
+            updateViewCount("21")
+        })
+        let atag22 = document.getElementById('fav_id:10');
+        console.log(atag22)
+        atag22.addEventListener("click", () => {
+            updateViewCount("22")
+        })
+        let atag23 = document.getElementById('fav_id:11');
+        console.log(atag23)
+        atag23.addEventListener("click", () => {
+            updateViewCount("23")
         })
     </script>
 </body>
