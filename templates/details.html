@@ -1,15 +1,88 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>{{title}}'s Product Details</title>
+<title>{{title}}'s Product Details</title>
 {% endblock %}
 
 {% block body %}
-    <h2>{{title}}'s Product Details</h2>
-    <img src={{image}}><br>
-    Description = {{description}}<br>
-    Duration(if it is a movie): {{duration}}<br>
-    Price: {{price}}<br>
-    <button action="add_to_cart({{title}},{{price}})">Add to cart!</button>
-    {{text}}
+
+<body>
+    <nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
+                            Home</a></li>
+                    <li class="nav-item dropdown"><a class=" nav-link dropdown-toggle" role="button"
+                            data-toggle="dropdown" href="/profile"><span class="fa fa-user fa-lg"></span>
+                            Profile</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/profile">Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/favourites">Favourites</a>
+                            <a class="dropdown-item" href="/history">Purchase History</a>
+                            <a class="dropdown-item" href="/tokens">Tokens</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                            Cart</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
+                            Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3>C</h3>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>{{title}}'s Product Details</h2>
+        <img src={{image}}><br>
+        Description = {{description}}<br>
+        Duration(if it is a movie): {{duration}}<br>
+        Price: {{price}}<br>
+        <button class="btn btn-success" id="addToCart" action="add_to_cart({{title}},{{price}})">Add to cart!</button>
+        <div id="addToCartStatus"></div>
+        <!-- {{text}} -->
+    </div>
+    <script>
+        let addToCart = document.getElementById("addToCart");
+        addToCart.addEventListener('click', () => {
+            console.log("add to cart")
+            let price = 1, title = "lol";
+            price = String({{ price | tojson }});
+        title = String({{ title | tojson }});
+        let productAdded = { product_title: title, product_price: price }
+        console.log(productAdded)
+        fetch('http://localhost:5000/add_to_cart', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productAdded),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                let addToCartStatus = document.getElementById("addToCartStatus");
+                addToCartStatus.innerHTML = "<p class='text-success'>Item Added!</p>"
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        })
+    </script>
+</body>
 {% endblock %}
