@@ -76,7 +76,7 @@
                 </form> -->
             </div>
         </div>
-		
+
         <div class="row">
             <div class="col-6">
                 <h3 class="mb-3"> Here is our Most Viewed Items </h3>
@@ -137,10 +137,10 @@
                 </div>
             </div>
         </div>
-		
-		
-		<!-- TESTING-->
-		<div class="row">
+
+        {% if fav != [] %}
+        <!-- TESTING-->
+        <div class="row">
             <div class="col-6">
                 <h3 class="mb-3"> Your Favourite Items </h3>
             </div>
@@ -168,7 +168,7 @@
                                             <h5 class="card-title">{{fav[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[k].price}}</h6>
                                             <a href="#" class="card-link">Card link</a>
-                                            <a href="#" id={{"freq_id:%d" %k}} class="card-link">View</a>
+                                            <a href="#" id={{"fav:%d" %k}} class="card-link">View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -188,7 +188,7 @@
                                             <h5 class="card-title">{{fav[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[3*(i+1)+j].price}}</h6>
                                             <a href="#" class="card-link">Card link</a>
-                                            <a href="#" id={{"freq_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
+                                            <a href="#" id={{"fav:%d" %(3*(i+1)+j)}} class="card-link">View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -200,11 +200,11 @@
                 </div>
             </div>
         </div>
-		
+        {% endif %}
     </div>
-	
-	
-	
+
+
+
     <script>
         function updateViewCount(id) {
             const data = { product_id: id };
