@@ -101,7 +101,18 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Product %r>' % self.id
+class Cart(db.Model):
+    __tablename__ = 'cart'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    product = db.Column(db.String(1000), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    
+    def __repr__(self):
+        return '<Cart %r>' % self.id
 
+db.create_all()
     
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
@@ -447,6 +458,25 @@ def results():
     else:
         text = "Please login to an account!"
         return redirect('/login')
+
+@app.route("/add_to_cart", methods=['POST'])
+def add_to_cart():
+    title = request.json['product_title']
+    cost = request.json['product_price']
+    # have = Cart.query.filter(
+    #         and_(
+    #             Cart.product.filter(title),
+    #             Cart.user_id.filter(userID)
+    #         )
+    #     ).all()
+    have = Cart.query.filter_by(product = title, cost = cost, user_id = userID).all()
+    if have == []:
+        newItem = Cart(user_id=userID,product=title,quantity=1,cost=cost)
+        db.session.add(newItem)
+    else:
+        have[-1].quantity = have[-1].quantity+1
+    db.session.commit()
+    return {"msg":"success"}
 
 #in progress
 @app.route('/cart', methods=['POST','GET'])

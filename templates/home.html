@@ -60,6 +60,8 @@
             <a href="/logout"><input type=button value='Logout'></a> -->
                 <!-- <br> -->
             </div>
+            <div id="addToCartStatus">
+            </div>
             <div class="col-12">
                 <form class="form-inline" autocomplete="off" spellcheck="false" action="/results" method="POST">
                     <div class="form-group ">
@@ -104,7 +106,9 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{products[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{products[k].price}}</h6>
-                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#"
+                                                onclick="addToCart('+{{products[k].title}}+','+{{products[k].price}}+')"
+                                                class="card-link">Add to cart</a>
                                             <a href="#" id={{"freq_id:%d" %k}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -124,7 +128,9 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{products[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{products[3*(i+1)+j].price}}</h6>
-                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#"
+                                                onclick="addToCart('+{{products[3*(i+1)+j].title}}+','+{{products[3*(i+1)+j].price}}+')"
+                                                class="card-link">Add to cart</a>
                                             <a href="#" id={{"freq_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -167,7 +173,8 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{fav[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[k].price}}</h6>
-                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#" onclick="addToCart('+{{fav[k].title}}+','+{{fav[k].price}}+')"
+                                                class="card-link">Add to cart</a>
                                             <a href="#" id={{"fav_id:%d" %k}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -187,7 +194,9 @@
                                         <div class="card-body">
                                             <h5 class="card-title">{{fav[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">{{fav[3*(i+1)+j].price}}</h6>
-                                            <a href="#" class="card-link">Add to cart</a>
+                                            <a href="#" class="card-link"
+                                                onclick="addToCart('+{{fav[3*(i+1)+j].title}}+','+{{fav[3*(i+1)+j].price}}+')">Add
+                                                to cart</a>
                                             <a href="#" id={{"fav_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
                                         </div>
                                     </div>
@@ -205,6 +214,29 @@
 
 
     <script>
+        function addToCart(title, price) {
+            console.log("add to cart")
+            let productAdded = { product_title: title, product_price: price }
+            console.log(productAdded)
+            fetch('http://localhost:5000/add_to_cart', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productAdded),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    let addToCartStatus = document.getElementById("addToCartStatus");
+                    addToCartStatus.innerHTML = "<p class='text-success'>Item Added!</p>"
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+
         function updateViewCount(id) {
             const data = { product_id: id };
             fetch('http://localhost:5000/update_view_count', {
@@ -282,7 +314,7 @@
         atag11.addEventListener("click", () => {
             updateViewCount("11")
         })
-		let atag12 = document.getElementById('fav_id:0');
+        let atag12 = document.getElementById('fav_id:0');
         console.log(atag12)
         atag12.addEventListener("click", () => {
             updateViewCount("12")
