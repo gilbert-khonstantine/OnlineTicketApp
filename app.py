@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from flask_cors import CORS
 from sqlalchemy import and_
 from api import verify_email
 from api import verify_profile
@@ -9,6 +10,7 @@ from api import send_email
 from api import search_results
 
 app = Flask(__name__)
+CORS(app)
 app.config["DEBUG"] = True
 
 #Database config
