@@ -58,12 +58,9 @@ class UserHist(db.Model):
 class UserFav(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    tag1 = db.Column(db.Boolean, default=0)
-    tag2 = db.Column(db.Boolean, default=0)
-    tag3 = db.Column(db.Boolean, default=0)
-    tag4 = db.Column(db.Boolean, default=0)
-    tag5 = db.Column(db.Boolean, default=0)
-    tag6 = db.Column(db.Boolean, default=0)
+    tags = db.Column(db.String(255), default='0'*3)
+    subtags = db.Column(db.String(255), default='0'*20)
+
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
@@ -201,31 +198,46 @@ def home():
             # check for user's chosen tags
             user = User.query.get(userID)
             user_fav = UserFav.query.get(userID)
-            temp = user_fav.__table__.columns.keys()[2:] # get column names
-            tag_bool = [getattr(user_fav, tags) for tags in temp] # get tag boolean values from column names
+            print(user, user_fav)
+
+            # get tags/subtags values
+            tag_val = user_fav.tags
+            subtag_val = user_fav.subtags
+            tag_names = ['Attractions', 'Movies', 'Museums']
+            subtag_names = (['Nature', 'Theme park', 'Others', 'Action', 'Adventure', 'Animation', 'Comedy',
+                            'Concert', 'Drama', 'Family', 'Fantasy', 'Horror', 'Musical', 'Mystery',
+                            'Romance', 'Sci-Fiction', 'Suspense', 'Thriller', 'Art/Design', 'History'])
             tag_list = []
+            subtag_list = []
 
-            # corresponding names of tags
-            # will edit UserFav class so no need to append like this
-            for i in range(len(tag_bool)):
-                if i==0 and tag_bool[i] == True:
-                    tag_list.append('Attractions')
+            # if 1, tag/subtag valid for favourite
+            for i in range(len(tag_names)):
+                if tag_val[i] == '1':
+                    tag_list.append(tag_names[i])
 
-                elif i==1 and tag_bool[i] == True:
-                    tag_list.append('Movies')
+            for i in range(len(subtag_names)):
+                if subtag_val[i] == '1':
+                    subtag_list.append(subtag_names[i])
 
-                elif i==2 and tag_bool[i] == True:
-                    tag_list.append('Museums')
+            print(tag_val, tag_list)
+            print(subtag_val, subtag_list)
                     
-            print(temp, tag_bool, tag_list, sep='\n')  
-            
-            # from chosen tags, get 12 favourites randomly to display
-            all_fav = Product.query.filter(Product.tag.in_(tag_list)).all()
+            # get products matching chosen tags
+            #temp = Product.query.filter(Product.tag.in_(tag_list)).filter(Product.subtag.in_(subtag_list)).all()
+            temp = Product.query.filter(Product.tag.in_(tag_list)).all()
+
+            # get products containing subtags as substring
+            all_fav = [x for x in temp for y in subtag_list if y in x.subtag]
+            all_fav = list(set(all_fav))
+            print(len(all_fav))
             shuffle(all_fav)
-            fav = all_fav[0:12]
-            print(len(all_fav), *[p for p in fav], sep='\n') 
-            
-                 
+
+            if len(all_fav) > 12:
+                fav = all_fav[0:12]
+            else:
+                fav = all_fav
+                
+            print(len(all_fav), *[p for p in fav], sep='\n')
             return render_template('home.html', user=user, text=text, products = top12_product, fav=fav)
     else:
         text = "Please login to an account!"
@@ -298,54 +310,55 @@ def favourites():
     if userID!=0:
         user = User.query.get(userID)
         user_fav = UserFav.query.get(userID)
-        if request.method == 'POST':
-            if request.form.get('attractions'): user_fav.tag1 = True
-            else: user_fav.tag1 = False
-            if request.form.get('movies'): user_fav.tag2 = True
-            else: user_fav.tag2 = False
-            if request.form.get('museums'): user_fav.tag3 = True
-            else: user_fav.tag3 = False
-            if request.form.get('blues'): user_fav.tag4 = True
-            else: user_fav.tag4 = False
-            if request.form.get('zoo'): user_fav.tag5 = True
-            else: user_fav.tag5 = False
-            if request.form.get('amusement_park'): user_fav.tag6 = True
-            else: user_fav.tag6 = False
+
+        tag_val = ''
+        subtag_names = (['nature', 'theme_park', 'others', 'action', 'adventure', 'animation', 'comedy',
+                        'concert', 'drama', 'family', 'fantasy', 'horror', 'musical', 'mystery',
+                        'romance', 'sci_fiction', 'suspense', 'thriller', 'art_design', 'history'])
+        subtag_val = ''
+        values = [0]*len(subtag_names)
+             
+        if request.method == 'POST':  
+            for i in range(len(subtag_names)):
+                if request.form.get(subtag_names[i]):
+                    subtag_val += '1'
+                else:
+                    subtag_val += '0'
+                
             try:
-                print(user_fav.tag1, user_fav.tag2, user_fav.tag3)
+                if '1' in subtag_val[0:3]: tag_val += '1'
+                else: tag_val += '0'
+                if '1' in subtag_val[3:18]: tag_val += '1'
+                else: tag_val += '0'
+                if '1' in subtag_val[18:]: tag_val += '1'
+                else: tag_val += '0'
+
+                user_fav.tags = tag_val
+                user_fav.subtags = subtag_val
+                #print(user_fav.tags, user_fav.subtags, sep='\n')
                 db.session.commit()
-                if user_fav.tag1 == True: value1 = 'checked'
-                else: value1 = 'unchecked'
-                if user_fav.tag2 == True: value2 = 'checked'
-                else: value2 = 'unchecked'
-                if user_fav.tag3 == True: value3 = 'checked'
-                else: value3 = 'unchecked'
-                if user_fav.tag4 == True: value4 = 'checked'
-                else: value4 = 'unchecked'
-                if user_fav.tag5 == True: value5 = 'checked'
-                else: value5 = 'unchecked'
-                if user_fav.tag6 == True: value6 = 'checked'
-                else: value6 = 'unchecked'
+
+                for i in range(len(subtag_names)):
+                    if user_fav.subtags[i] == '1':
+                        values[i] = 'checked'
+                    else:
+                        values[i] = 'unchecked'
+                        
                 text = "Favourites updated!"
-                return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+                return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
+            
             except:
                 text = "Update failed!"
-                return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+                return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
         else:
-            if user_fav.tag1 == True: value1 = 'checked'
-            else: value1 = 'unchecked'
-            if user_fav.tag2 == True: value2 = 'checked'
-            else: value2 = 'unchecked'
-            if user_fav.tag3 == True: value3 = 'checked'
-            else: value3 = 'unchecked'
-            if user_fav.tag4 == True: value4 = 'checked'
-            else: value4 = 'unchecked'
-            if user_fav.tag5 == True: value5 = 'checked'
-            else: value5 = 'unchecked'
-            if user_fav.tag6 == True: value6 = 'checked'
-            else: value6 = 'unchecked'
-            text=""
-            return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+            for i in range(len(subtag_names)):
+                    if user_fav.subtags[i] == '1':
+                        values[i] = 'checked'
+                    else:
+                        values[i] = 'unchecked'
+                    
+            text = ""
+            return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
     else:
         text = "Please login to an account!"
         return redirect('/login')
