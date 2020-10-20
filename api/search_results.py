@@ -16,12 +16,10 @@ def get_results(search_word):
     id=[]
     title=[]
     price=[]
-    duration=[]
     image=[]
     for i in range(length):
         id.append(results[i].id)
         title.append(results[i].title)
         price.append(results[i].price)
-        duration.append(results[i].duration)
         image.append(results[i].image_link)
-    return (id,title,price,duration,image)
+    return (id,title,price,image)

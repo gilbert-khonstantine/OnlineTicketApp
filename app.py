@@ -392,8 +392,7 @@ def results():
                                     pid=result[0],
                                     title=result[1],
                                     price=result[2],
-                                    duration=result[3],
-                                    image=result[4])
+                                    image=result[3])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -451,9 +450,10 @@ def receipt():
         return redirect('/login')
     
 if __name__ == "__main__":
+    #Create variable to store logged in userID
     userID = 0
-    userCart = ["zoo","help","idk"]
+    #Create variable to send text to each html page
     text = ""
-    total = 0
+    #Create variable to store twofa to compare with user input
     twofa = ""
     app.run(debug=True)

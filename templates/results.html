@@ -56,23 +56,25 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th scope="col">View</th>
                 <th scope="col">Product ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Price</th>
-                <th scope="col">Duration</th>
                 <th scope="col">Image</th>
+                <th scope="col">Details</th>
             </tr>
         </thead>
 
         {% for row in range(pid |length) %}
         <tr>
-            <td class="c2"><a href="/home">View</a></td>
-            <td class="c2">{{pid[row]}}</td>
+            <td class="c3">{{pid[row]}}</td>
             <td class="c3">{{title[row]}}</td>
             <td class="c3">{{price[row]}}</td>
-            <td class="c3">{{duration[row]}}</td>
-            <td class="c3">{{image[row]}}</td>
+            <td class="c3"><img src={{image[row]}}></td>
+            <td class="c3">
+                <div class="form-group">
+                    <input class="btn btn-primary btn-block" type="submit" name="details" value="Click here for more details!" />
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </table>
