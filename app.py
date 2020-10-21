@@ -249,7 +249,7 @@ def home():
                 fav = all_fav
                 
             print(len(all_fav), *[p for p in fav], sep='\n')
-            return render_template('home.html', user=user, text=text, products = top12_product, fav=fav)
+            return render_template('home.html', user=user, text=text, products = top12_product, fav=fav, numloop=len(all_fav))
     else:
         text = "Please login to an account!"
         return redirect('/login')
