@@ -60,6 +60,8 @@
             <a href="/logout"><input type=button value='Logout'></a> -->
                 <!-- <br> -->
             </div>
+            <div id="addToCartStatus">
+            </div>
             <div class="col-12">
                 <form class="form-inline" autocomplete="off" spellcheck="false" action="/results" method="POST">
                     <div class="form-group ">
@@ -76,6 +78,308 @@
                 </form> -->
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-6">
+                <h3 class="mb-3"> Here is our Most Viewed Items </h3>
+            </div>
+            <div class="col-6 text-right">
+                <a class="btn btn-primary mb-3 mr-1" href="#carouselExampleIndicators2" role="button" data-slide="prev">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a class="btn btn-primary mb-3 " href="#carouselExampleIndicators2" role="button" data-slide="next">
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-12">
+                <div id="carouselExampleIndicators2" class="carousel slide" data-ride="carousel">
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <!-- top 3 items -->
+                                {% for k in range(3) %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:300px;"
+                                            src={{products[k].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{products[k].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{products[k].price}}</h6>
+                                            <a href="#"
+                                                onclick="addToCart('+{{products[k].title}}+','+{{products[k].price}}+')"
+                                                class="card-link">Add to cart</a>
+                                            <a href="#" id={{"freq_id:%d" %k}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- Iterate the rest 9 Items -->
+                        {% for i in range(3) %}
+                        <div class="carousel-item">
+                            <div class="row">
+                                {% for j in range(3) %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:280px;"
+                                            src={{products[3*(i+1)+j].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{products[3*(i+1)+j].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{products[3*(i+1)+j].price}}</h6>
+                                            <a href="#"
+                                                onclick="addToCart('+{{products[3*(i+1)+j].title}}+','+{{products[3*(i+1)+j].price}}+')"
+                                                class="card-link">Add to cart</a>
+                                            <a href="#" id={{"freq_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if fav != [] %}
+        <!-- TESTING-->
+        <div class="row">
+            <div class="col-6">
+                <h3 class="mb-3"> Your Favourite Items </h3>
+            </div>
+            <div class="col-6 text-right">
+                <a class="btn btn-primary mb-3 mr-1" href="#carouselExampleIndicators3" role="button" data-slide="prev">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a class="btn btn-primary mb-3 " href="#carouselExampleIndicators3" role="button" data-slide="next">
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-12">
+                <div id="carouselExampleIndicators3" class="carousel slide" data-ride="carousel">
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <!-- top 3 items -->
+                                {% for k in range(3) %}
+                                {% if numloop >= k+1 %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:300px;"
+                                            src={{fav[k].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{fav[k].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{fav[k].price}}</h6>
+                                            <a href="#" onclick="addToCart('+{{fav[k].title}}+','+{{fav[k].price}}+')"
+                                                class="card-link">Add to cart</a>
+                                            <a href="#" id={{"fav_id:%d" %k}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- Iterate the rest 9 Items -->
+                        {% for i in range(3) %}
+                        {% if (numloop-3) - (i+1)*3 >= -2 %}
+                        <div class="carousel-item">
+                            <div class="row">
+                                {% for j in range(3) %}
+                                {% if numloop - 3 >= (i*3) + (j+1) %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <img class="img-fluid" style="width:400px;height:280px;"
+                                            src={{fav[3*(i+1)+j].image_link}}>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{fav[3*(i+1)+j].title}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{fav[3*(i+1)+j].price}}</h6>
+                                            <a href="#" class="card-link"
+                                                onclick="addToCart('+{{fav[3*(i+1)+j].title}}+','+{{fav[3*(i+1)+j].price}}+')">Add
+                                                to cart</a>
+                                            <a href="#" id={{"fav_id:%d" %(3*(i+1)+j)}} class="card-link">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
+
+
+    <script>
+        function addToCart(title, price) {
+            console.log("add to cart")
+            let productAdded = { product_title: title, product_price: price }
+            console.log(productAdded)
+            fetch('http://localhost:5000/add_to_cart', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productAdded),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    let addToCartStatus = document.getElementById("addToCartStatus");
+                    addToCartStatus.innerHTML = "<p class='text-success'>Item Added!</p>"
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+        function updateViewCount(id) {
+            const data = { product_id: id };
+            fetch('http://localhost:5000/update_view_count', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+        let atag0 = document.getElementById('freq_id:0');
+        console.log(atag0)
+        atag0.addEventListener("click", () => {
+            updateViewCount("0")
+        })
+        let atag1 = document.getElementById('freq_id:1');
+        console.log(atag1)
+        atag1.addEventListener("click", () => {
+            updateViewCount("1")
+        })
+        let atag2 = document.getElementById('freq_id:2');
+        console.log(atag2)
+        atag2.addEventListener("click", () => {
+            updateViewCount("2")
+        })
+        let atag3 = document.getElementById('freq_id:3');
+        console.log(atag3)
+        atag3.addEventListener("click", () => {
+            updateViewCount("3")
+        })
+        let atag4 = document.getElementById('freq_id:4');
+        console.log(atag4)
+        atag4.addEventListener("click", () => {
+            updateViewCount("4")
+        })
+        let atag5 = document.getElementById('freq_id:5');
+        console.log(atag5)
+        atag5.addEventListener("click", () => {
+            updateViewCount("5")
+        })
+        let atag6 = document.getElementById('freq_id:6');
+        console.log(atag6)
+        atag6.addEventListener("click", () => {
+            updateViewCount("6")
+        })
+        let atag7 = document.getElementById('freq_id:7');
+        console.log(atag7)
+        atag7.addEventListener("click", () => {
+            updateViewCount("7")
+        })
+        let atag8 = document.getElementById('freq_id:8');
+        console.log(atag8)
+        atag8.addEventListener("click", () => {
+            updateViewCount("8")
+        })
+        let atag9 = document.getElementById('freq_id:9');
+        console.log(atag9)
+        atag9.addEventListener("click", () => {
+            updateViewCount("9")
+        })
+        let atag10 = document.getElementById('freq_id:10');
+        console.log(atag10)
+        atag10.addEventListener("click", () => {
+            updateViewCount("10")
+        })
+        let atag11 = document.getElementById('freq_id:11');
+        console.log(atag11)
+        atag11.addEventListener("click", () => {
+            updateViewCount("11")
+        })
+        let atag12 = document.getElementById('fav_id:0');
+        console.log(atag12)
+        atag12.addEventListener("click", () => {
+            updateViewCount("12")
+        })
+        let atag13 = document.getElementById('fav_id:1');
+        console.log(atag13)
+        atag13.addEventListener("click", () => {
+            updateViewCount("13")
+        })
+        let atag14 = document.getElementById('fav_id:2');
+        console.log(atag14)
+        atag14.addEventListener("click", () => {
+            updateViewCount("14")
+        })
+        let atag15 = document.getElementById('fav_id:3');
+        console.log(atag15)
+        atag15.addEventListener("click", () => {
+            updateViewCount("15")
+        })
+        let atag16 = document.getElementById('fav_id:4');
+        console.log(atag16)
+        atag16.addEventListener("click", () => {
+            updateViewCount("16")
+        })
+        let atag17 = document.getElementById('fav_id:5');
+        console.log(atag17)
+        atag5.addEventListener("click", () => {
+            updateViewCount("17")
+        })
+        let atag18 = document.getElementById('fav_id:6');
+        console.log(atag18)
+        atag6.addEventListener("click", () => {
+            updateViewCount("18")
+        })
+        let atag19 = document.getElementById('fav_id:7');
+        console.log(atag19)
+        atag19.addEventListener("click", () => {
+            updateViewCount("19")
+        })
+        let atag20 = document.getElementById('fav_id:8');
+        console.log(atag20)
+        atag20.addEventListener("click", () => {
+            updateViewCount("20")
+        })
+        let atag21 = document.getElementById('fav_id:9');
+        console.log(atag21)
+        atag21.addEventListener("click", () => {
+            updateViewCount("21")
+        })
+        let atag22 = document.getElementById('fav_id:10');
+        console.log(atag22)
+        atag22.addEventListener("click", () => {
+            updateViewCount("22")
+        })
+        let atag23 = document.getElementById('fav_id:11');
+        console.log(atag23)
+        atag23.addEventListener("click", () => {
+            updateViewCount("23")
+        })
+    </script>
 </body>
 {% endblock %}
