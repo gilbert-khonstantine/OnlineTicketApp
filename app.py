@@ -446,7 +446,7 @@ def bank():
                 text="Wrong card details"
                 return render_template('bank.html', user=user, text=text)
         else:
-            twofa = send_email.send_2fa()
+            twofa = send_email.send_2fa(user)
             text=''
             return render_template('bank.html', user=user, text=text)
     else:

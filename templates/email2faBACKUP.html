@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .buttontip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .buttontip .buttontiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .buttontip .buttontiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .buttontip:hover .buttontiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .card {
+          background-color: #f7f9fb;
+          box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+          transition: 0.3s;
+          width: 40%;
+	  margin: auto;
+        }
+        
+        .card:hover {
+          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        
+        .container {
+          text-align: center;
+          padding: 2px 16px;
+        }
+
+        .footer {
+	        color: #888;
+        }
+        </style>
+</head>
+<body>
+    <div class="card">
+        <div class="container">
+            <h2>Hello {{name}}!</h2>
+            <p>
+                Here is the 2FA code to continue your tokens purchase:
+            </p>
+
+            <h2 id="twoFA">{{randomTwoFA}}</h2><br>
+            
+            <div class="buttontip">
+                <button onclick="CopyText()" onmouseout="MouseOut()">
+                <span class="buttontiptext" id="mybuttontip">Copy To Clipboard</span>
+                Copy 2FA
+                </button>
+            </div>
+
+            <p>
+                Thank you for bring our loyal customer.
+            </p>
+            <hr>
+            <p class="footer">
+                Copyright &copy; 2020 &mdash; DanielTechTips
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function CopyText() {
+            var textToCopy = document.getElementById("twoFA").innerText;
+	        var dummy = document.createElement("textarea");
+	        document.body.appendChild(dummy);
+	        dummy.value = textToCopy;
+	        dummy.select();
+            document.execCommand("copy");
+	        document.body.removeChild(dummy);
+
+            var buttontip = document.getElementById("mybuttontip");
+            buttontip.innerHTML = "Copied 2FA";
+        }
+
+        function MouseOut() {
+            var tooltip = document.getElementById("mybuttontip");
+            tooltip.innerHTML = "Copy to clipboard";
+        }
+    </script>
+</body>
+</html>

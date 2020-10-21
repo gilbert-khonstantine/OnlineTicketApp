@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .card {
+            background-color: #f7f9fb;
+            width: 40%;
+            margin: auto;
+            padding: 10px
+        }
+
+        .border {
+            border-color: blue;
+            border-width: 5 px;
+            border-style: solid;
+            border-radius: 10px;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2px 16px;
+        }
+
+        .footer {
+	        color: #888;
+        }
+        </style>
+</head>
+<body>
+    <div class="card border">
+        <div class="container">
+            <h2>Hello {{name}}!</h2>
+            <p>
+                Thank you for being our loyal customer!<br>
+                Here is the 2FA code to continue your tokens purchase:
+            </p>
+
+            <h2 id="twoFA">{{randomTwoFA}}</h2><br>
+
+            <hr>
+            <p class="footer">
+                Copyright &copy; 2020 &mdash; DanielTechTips
+            </p>
+        </div>
+    </div>
+</body>
+</html>
