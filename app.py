@@ -5,6 +5,7 @@ from api import verify_email
 from api import verify_profile
 from api import make_payment
 from api import send_email
+from random import shuffle
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -57,12 +58,9 @@ class UserHist(db.Model):
 class UserFav(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
-    tag1 = db.Column(db.Boolean, default=0)
-    tag2 = db.Column(db.Boolean, default=0)
-    tag3 = db.Column(db.Boolean, default=0)
-    tag4 = db.Column(db.Boolean, default=0)
-    tag5 = db.Column(db.Boolean, default=0)
-    tag6 = db.Column(db.Boolean, default=0)
+    tags = db.Column(db.String(255), default='0'*3)
+    subtags = db.Column(db.String(255), default='0'*20)
+
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
@@ -92,16 +90,29 @@ class Item(db.Model):
 class Product(db.Model):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(1000), nullable=False)
     price = db.Column(db.String(255), nullable=False)
+    duration = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
     tag = db.Column(db.String(255), nullable=False)
+    subtag = db.Column(db.String(255), nullable=False)
     image_link = db.Column(db.String(1000), nullable=False)
+    view_count = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<Product %r>' % self.id
+class Cart(db.Model):
+    __tablename__ = 'cart'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    product = db.Column(db.String(1000), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    
+    def __repr__(self):
+        return '<Cart %r>' % self.id
 
+db.create_all()
     
 @app.route('/')
 @app.route('/login', methods=['POST', 'GET'])
@@ -191,7 +202,68 @@ def home():
             search = request.form['search']
             return redirect('/results')
         else:
-            return render_template('home.html', user=user, text=text)
+            top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
+            print(top12_product[0].view_count)
+            print(top12_product[2].view_count)
+
+            # check for user's chosen tags
+            user = User.query.get(userID)
+            user_fav = UserFav.query.get(userID)
+            print(user, user_fav)
+
+            # get tags/subtags values
+            tag_val = user_fav.tags
+            subtag_val = user_fav.subtags
+            tag_names = ['Attractions', 'Movies', 'Museums']
+            subtag_names = (['Nature', 'Theme park', 'Others', 'Action', 'Adventure', 'Animation', 'Comedy',
+                            'Concert', 'Drama', 'Family', 'Fantasy', 'Horror', 'Musical', 'Mystery',
+                            'Romance', 'Sci-Fiction', 'Suspense', 'Thriller', 'Art/Design', 'History'])
+            tag_list = []
+            subtag_list = []
+
+            # if 1, tag/subtag valid for favourite
+            for i in range(len(tag_names)):
+                if tag_val[i] == '1':
+                    tag_list.append(tag_names[i])
+
+            for i in range(len(subtag_names)):
+                if subtag_val[i] == '1':
+                    subtag_list.append(subtag_names[i])
+
+            print(tag_val, tag_list)
+            print(subtag_val, subtag_list)
+                    
+            # get products matching chosen tags
+            #temp = Product.query.filter(Product.tag.in_(tag_list)).filter(Product.subtag.in_(subtag_list)).all()
+            temp = Product.query.filter(Product.tag.in_(tag_list)).all()
+
+            # get products containing subtags as substring
+            all_fav = [x for x in temp for y in subtag_list if y in x.subtag]
+            all_fav = list(set(all_fav))
+            print(len(all_fav))
+            shuffle(all_fav)
+
+            if len(all_fav) > 12:
+                fav = all_fav[0:12]
+            else:
+                fav = all_fav
+                
+            print(len(all_fav), *[p for p in fav], sep='\n')
+            return render_template('home.html', user=user, text=text, products = top12_product, fav=fav, numloop=len(all_fav))
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
+@app.route('/update_view_count', methods=['POST'])
+def update_view_count():
+    if userID!=0:
+        user = User.query.get(userID)
+        if request.method=='POST':
+            pid = request.json['product_id']
+            viewed_product = Product.query.filter_by(id=str(pid)).first()
+            viewed_product.view_count = viewed_product.view_count + 1
+            db.session.commit()
+            return {"message":"ok"}
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -249,53 +321,55 @@ def favourites():
     if userID!=0:
         user = User.query.get(userID)
         user_fav = UserFav.query.get(userID)
-        if request.method == 'POST':
-            if request.form.get('pop'): user_fav.tag1 = True
-            else: user_fav.tag1 = False
-            if request.form.get('rock'): user_fav.tag2 = True
-            else: user_fav.tag2 = False
-            if request.form.get('indie'): user_fav.tag3 = True
-            else: user_fav.tag3 = False
-            if request.form.get('blues'): user_fav.tag4 = True
-            else: user_fav.tag4 = False
-            if request.form.get('zoo'): user_fav.tag5 = True
-            else: user_fav.tag5 = False
-            if request.form.get('amusement_park'): user_fav.tag6 = True
-            else: user_fav.tag6 = False
+
+        tag_val = ''
+        subtag_names = (['nature', 'theme_park', 'others', 'action', 'adventure', 'animation', 'comedy',
+                        'concert', 'drama', 'family', 'fantasy', 'horror', 'musical', 'mystery',
+                        'romance', 'sci_fiction', 'suspense', 'thriller', 'art_design', 'history'])
+        subtag_val = ''
+        values = [0]*len(subtag_names)
+             
+        if request.method == 'POST':  
+            for i in range(len(subtag_names)):
+                if request.form.get(subtag_names[i]):
+                    subtag_val += '1'
+                else:
+                    subtag_val += '0'
+                
             try:
+                if '1' in subtag_val[0:3]: tag_val += '1'
+                else: tag_val += '0'
+                if '1' in subtag_val[3:18]: tag_val += '1'
+                else: tag_val += '0'
+                if '1' in subtag_val[18:]: tag_val += '1'
+                else: tag_val += '0'
+
+                user_fav.tags = tag_val
+                user_fav.subtags = subtag_val
+                #print(user_fav.tags, user_fav.subtags, sep='\n')
                 db.session.commit()
-                if user_fav.tag1 == True: value1 = 'checked'
-                else: value1 = 'unchecked'
-                if user_fav.tag2 == True: value2 = 'checked'
-                else: value2 = 'unchecked'
-                if user_fav.tag3 == True: value3 = 'checked'
-                else: value3 = 'unchecked'
-                if user_fav.tag4 == True: value4 = 'checked'
-                else: value4 = 'unchecked'
-                if user_fav.tag5 == True: value5 = 'checked'
-                else: value5 = 'unchecked'
-                if user_fav.tag6 == True: value6 = 'checked'
-                else: value6 = 'unchecked'
+
+                for i in range(len(subtag_names)):
+                    if user_fav.subtags[i] == '1':
+                        values[i] = 'checked'
+                    else:
+                        values[i] = 'unchecked'
+                        
                 text = "Favourites updated!"
-                return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+                return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
+            
             except:
                 text = "Update failed!"
-                return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+                return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
         else:
-            if user_fav.tag1 == True: value1 = 'checked'
-            else: value1 = 'unchecked'
-            if user_fav.tag2 == True: value2 = 'checked'
-            else: value2 = 'unchecked'
-            if user_fav.tag3 == True: value3 = 'checked'
-            else: value3 = 'unchecked'
-            if user_fav.tag4 == True: value4 = 'checked'
-            else: value4 = 'unchecked'
-            if user_fav.tag5 == True: value5 = 'checked'
-            else: value5 = 'unchecked'
-            if user_fav.tag6 == True: value6 = 'checked'
-            else: value6 = 'unchecked'
-            text=""
-            return render_template('favourites.html', user=user, user_fav=user_fav,value1=value1,value2=value2,value3=value3,value4=value4,value5=value5,value6=value6, text=text)
+            for i in range(len(subtag_names)):
+                    if user_fav.subtags[i] == '1':
+                        values[i] = 'checked'
+                    else:
+                        values[i] = 'unchecked'
+                    
+            text = ""
+            return render_template('favourites.html', user=user, user_fav=user_fav,values=values, text=text)
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -384,6 +458,25 @@ def results():
     else:
         text = "Please login to an account!"
         return redirect('/login')
+
+@app.route("/add_to_cart", methods=['POST'])
+def add_to_cart():
+    title = request.json['product_title']
+    cost = request.json['product_price']
+    # have = Cart.query.filter(
+    #         and_(
+    #             Cart.product.filter(title),
+    #             Cart.user_id.filter(userID)
+    #         )
+    #     ).all()
+    have = Cart.query.filter_by(product = title, cost = cost, user_id = userID).all()
+    if have == []:
+        newItem = Cart(user_id=userID,product=title,quantity=1,cost=cost)
+        db.session.add(newItem)
+    else:
+        have[-1].quantity = have[-1].quantity+1
+    db.session.commit()
+    return {"msg":"success"}
 
 #in progress
 @app.route('/cart', methods=['POST','GET'])
