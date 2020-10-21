@@ -211,7 +211,10 @@ def home():
         else:
             top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
             print(top12_product[0].view_count)
+            print(top12_product[0].title)
+            print(top12_product[2].title)
             print(top12_product[2].view_count)
+            print(top12_product)
 
             # check for user's chosen tags
             user = User.query.get(userID)
@@ -267,6 +270,7 @@ def update_view_count():
         user = User.query.get(userID)
         if request.method=='POST':
             pid = request.json['product_id']
+            print("pid: ",pid)
             viewed_product = Product.query.filter_by(id=str(pid)).first()
             viewed_product.view_count = viewed_product.view_count + 1
             db.session.commit()
