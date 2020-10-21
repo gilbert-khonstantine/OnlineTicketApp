@@ -116,18 +116,6 @@ class Cart(db.Model):
     def __repr__(self):
         return '<Cart %r>' % self.id
 
-class Cart(db.Model):
-    __tablename__ = 'cart'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    product = db.Column(db.String(1000), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    cost = db.Column(db.Integer, nullable=False)
-db.create_all()
-    
-    def __repr__(self):
-        return '<Cart %r>' % self.id
-
 db.create_all()
 
 @app.route('/')
