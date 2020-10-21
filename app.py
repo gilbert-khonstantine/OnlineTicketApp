@@ -8,6 +8,8 @@ from api import verify_profile
 from api import make_payment
 from api import send_email
 from api import search_results
+from api import cart_functions
+from api import history_functions
 from random import shuffle
 
 app = Flask(__name__)
@@ -105,6 +107,7 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Product %r>' % self.id
+
 class Cart(db.Model):
     __tablename__ = 'cart'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -383,14 +386,9 @@ def history():
     global text
     if userID!=0:
         user = User.query.get(userID)
-        user_hist = UserHist.query.filter_by(user_id=userID).all()
-        data=""
-        if user_hist is not None:
-            for row in user_hist:
-                data = data + str(row.product) + ',' + str(row.quantity) + ',' + str(row.cost) + ',' + str(row.datecreated) + ','
-            data = data[:-1]
-        text="Buy more products"
-        return render_template('history.html', user=user, text=text, purHist=data)
+        data = history_functions.getPurchaseHist(userID)
+        text = "Buy more products"
+        return render_template('history.html', user=user,len=data[0],product=data[1],quantity=data[2],cost=data[3], datetime=data[4])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -516,10 +514,22 @@ def cart():
     global text
     if userID!=0:
         user = User.query.get(userID)
-        return render_template('cart.html', user=user, userCart=userCart)
+        data = cart_functions.getCart(userID)
+        return render_template('cart.html', user=user, len=data[0],product=data[1],quantity=data[2],cost=data[3])
     else:
         text = "Please login to an account!"
         return redirect('/login')
+
+
+@app.route('/updatecart', methods=['POST','GET'])
+def updatecart():
+    name = request.json['product_title']
+    qty = request.json['product_qty']
+    cart.functions.UpdateCart(userID, name, qty)
+    print(name)
+    print(qty)
+    return {"msg": "success"}
+
 
 @app.route('/payment', methods=['POST','GET'])
 def payment():
