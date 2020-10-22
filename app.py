@@ -543,10 +543,12 @@ def payment():
         user_info = UserInfo.query.get(userID)
         results = cart_functions.getCart(userID)
         total = 0
-        price = results[3]
-        for i in range(len(results)):
+        price = list.copy(results[3])
+        quan = list.copy(results[2])
+        for i in range(results[0]):
             price[i]=price[i][2:]
-            total = total + int(price[i])
+            total = total + float(price[i]) * float(quan[i])
+        total = "S$" + str(total)
         text=""
         return render_template('payment.html',
                                 user = user,
