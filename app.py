@@ -538,7 +538,6 @@ def updatecart():
 @app.route('/payment', methods=['POST','GET'])
 def payment():
     global text
-    global total
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
@@ -551,28 +550,34 @@ def payment():
             total = total + float(price[i]) * float(quan[i])
         total = "S$" + str(total)
         text=""
-        return render_template('payment.html',
-                                user = user,
-                                product = results[1],
-                                quantity = results[2],
-                                cost = results[3],
-                                total = total)
+        if request.method == "POST":
+            return deduct(total)
+        else:
+            return render_template('payment.html',
+                                    user = user,
+                                    tokens = user_info.token,
+                                    product = results[1],
+                                    quantity = results[2],
+                                    cost = results[3],
+                                    total = total)
     else:
         text = "Please login to an account!"
         return redirect('/login')
 
-@app.route('/deduct', methods=['POST', 'GET'])
-def deduct():
+def deduct(total):
     global text
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        #price = request.json['total_price']
-        price=0
-        if user_info.token - price < 0:
+        price = total[2:]
+        if user_info.token - float(price) < 0:
+            text = "Insufficient tokens, please top-up. Your total cart price is: " + total
             return render_template('deduct.html')
         else:
-            text=""
+            balance = user_info.token - float(price)
+            user_info.token = int(balance)
+            db.session.commit()
+            text="Tokens deducted"
             return redirect('/receipt')
     else:
         text = "Please login to an account!"
@@ -595,7 +600,7 @@ def receipt():
             else:
                 text="delete not ok"
         else:
-            text="adding not ok"
+            text=text+"adding not ok"
         return render_template('receipt.html', user=user, text=text)
     else:
         text = "Please login to an account!"
@@ -608,6 +613,4 @@ if __name__ == "__main__":
     text = ""
     #Create variable to store twofa to compare with user input
     twofa = ""
-    #Create variable to store total price to be checked in deduct
-    total = 0
     app.run(debug=True)

@@ -73,26 +73,14 @@
             <td class="c3">{{total}}</td>
         </tr>
     </table>
-    <a href='/deduct'><button class="btn btn-primary" id="send" action="send({{total}})">Pay!</button></a>
 </div>
-<script>
-    let send = document.getElementById("send");
-    send.addEventListener('click', () => {
-        console.log("sending")
-        let total = 1;
-            total = String({{ total | tojson }});
-        let cart_price = {total_price: total}
-        
-        fetch('http://localhost:5000/deduct', {
-            method: 'POST', // or 'PUT'
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(cart_price),
-        })
-            
-        })
-</script>
+
+<form class="form" name='myform' method="POST" onsubmit=''>
+    <button type="submit" class="btn btn-primary btn-block" action="check_tokens({{tokens}},{{total}})">
+        Pay!
+    </button>
+</form>
+
 <!-- <h2>{{ user.name }}'s Payment</h2>
     <a href="/home"><input type=button value="Return Home"></a>
     <a href="/profile"><input type="button" value="View/Edit Profile"></a>
