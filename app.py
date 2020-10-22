@@ -566,8 +566,8 @@ def deduct():
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        price = request.get_json()
-        if user_info.token - price.total_price < 0:
+        price = request.json['total_price']
+        if user_info.token - price < 0:
             return render_template('deduct.html')
         else:
             text=""
