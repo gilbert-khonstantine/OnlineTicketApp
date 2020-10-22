@@ -545,6 +545,7 @@ def payment():
         total = 0
         price = results[3]
         for i in range(len(results)):
+            price[i]=price[i][2:]
             total = total + int(price[i])
         text=""
         return render_template('payment.html',
