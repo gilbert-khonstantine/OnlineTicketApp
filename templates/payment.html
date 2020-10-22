@@ -53,43 +53,35 @@
         </ol>
     </div>
     <h2>{{ user.name }}'s Payment Details</h2>
-    <!-- <br> Items: {{itemlist}} </br> -->
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th scope="col">Product</th>
-                <th scope="col">Price ($)</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price per Item</th>
             </tr>
         </thead>
-        {% for item in itemlist %}
+        {% for row in range(product|length) %}
         <tr>
-            <td class="c2">{{item[0]}}</td>
-            <td class="c3">{{item[1]}}</td>
+            <td class="c2">{{product[row]}}</td>
+            <td class="c3">{{quantity[row]}}</td>
+            <td class="c3">{{price[row]}}</td>
         </tr>
         {% endfor %}
-        <tr class="table-danger">
-            <td class="c2">Subtotal</td>
-            <td class="c3">{{subtotal}}</td>
-        </tr>
-        <tr class="table-success">
-            <td class="c2">Discount</td>
-            <td class="c3">{{discount}}</td>
-        </tr>
         <tr class="table-danger">
             <td class="c2">Total</td>
             <td class="c3">{{total}}</td>
         </tr>
-        <tr class="table-info">
-            <td class="c2">Shipping</td>
-            <td class="c3">{{shipping}}</td>
-        </tr>
-        <tr class="table-info">
-            <td class="c2">Payment Option</td>
-            <td class="c3">{{payment_method}}</td>
-        </tr>
     </table>
-    <a href=/deduct><input class="btn btn-primary" type=button value='Pay!'></a>
+    <a href=/deduct><input class="btn btn-primary" type=button id=send value='Pay!'></a>
 </div>
+<script>
+    let send = document.getElementById("send");
+    addToCart.addEventListener('click', () => {
+        var price = {total_price: total}
+        JSON.stringify(price)
+    })
+</script>
 <!-- <h2>{{ user.name }}'s Payment</h2>
     <a href="/home"><input type=button value="Return Home"></a>
     <a href="/profile"><input type="button" value="View/Edit Profile"></a>

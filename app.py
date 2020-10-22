@@ -534,29 +534,41 @@ def updatecart():
     print(qty)
     return {"msg": "success"}
 
-
 @app.route('/payment', methods=['POST','GET'])
 def payment():
+    global text
+    global total
+    if userID!=0:
+        user = User.query.get(userID)
+        user_info = UserInfo.query.get(userID)
+        results = cart_functions.getCart(userID)
+        total = 0
+        price = results[3]
+        for i in range(len(results)):
+            total = total + int(price[i])
+        text=""
+        return render_template('payment.html',
+                                user = user,
+                                product = results[1],
+                                quantity = results[2],
+                                cost = results[3],
+                                total = total)
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
+@app.route('/deduct', methods=['POST','GET'])
+def deduct():
     global text
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        token = user_info.token
-        t = make_payment.payment(token)
-        text=""
-        if t[0]:
-            return render_template('payment.html',
-                                    the_title = 'Payment',
-                                    itemlist = t[1],
-                                    subtotal = t[2],
-                                    discount = t[3],
-                                    total = t[4],
-                                    shipping = t[5],
-                                    payment_method = t[6],
-                                    user = user)
+        price = request.get_json()
+        if user_info.token - price.total_price < 0:
+            return render_template('deduct.html')
         else:
-            text='Insufficient tokens, please top up!'
-            return redirect('/tokens')
+            text=""
+            return redirect('/receipt')
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -569,7 +581,6 @@ def receipt():
     if userID!=0:
         user = User.query.get(userID)
         if text != "Tokens deducted! Thank you for your purchase!":
-            userCart=[]
             text = ""
         return render_template('receipt.html', user=user, text=text)
     else:
@@ -583,4 +594,6 @@ if __name__ == "__main__":
     text = ""
     #Create variable to store twofa to compare with user input
     twofa = ""
+    #Create variable to store total price to be checked in deduct
+    total = 0
     app.run(debug=True)
