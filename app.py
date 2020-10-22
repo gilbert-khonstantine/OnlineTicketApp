@@ -529,9 +529,25 @@ def cart():
 def updatecart():
     name = request.json['product_title']
     qty = request.json['product_qty']
-    cart.functions.UpdateCart(userID, name, qty)
-    print(name)
-    print(qty)
+    price = request.json['product_price']
+    action = request.json['action']
+    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # user_id = db.Column(db.Integer, nullable=False)
+    # product = db.Column(db.String(1000), nullable=False)
+    # quantity = db.Column(db.Integer, nullable=False)
+    # cost = db.Column(db.Integer, nullable=False)
+    if action == "add":
+        # selected_item = Cart.query.filter_by(product=name,quantity=qty,cost=price).all()
+        selected_item = Cart.query.filter_by(product=name,quantity=int(qty)-1).all()[-1]
+        selected_item.quantity = selected_item.quantity + 1
+    elif action == "subtract":
+        selected_item = Cart.query.filter_by(product=name,quantity=int(qty)+1).all()[-1]
+        selected_item.quantity = selected_item.quantity - 1
+        if selected_item.quantity == 0:
+            Cart.query.filter_by(product=name,quantity=int(qty)).delete()
+    elif action == "delete":
+        Cart.query.filter_by(product=name,quantity=int(qty)).delete()
+    db.session.commit()
     return {"msg": "success"}
 
 
