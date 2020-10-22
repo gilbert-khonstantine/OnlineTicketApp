@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask_cors import CORS
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from api import verify_email
 from api import verify_profile
 from api import make_payment
@@ -57,7 +57,7 @@ class UserHist(db.Model):
     product = db.Column(db.String(255), nullable=True)
     quantity = db.Column(db.Integer, nullable = True)
     cost = db.Column(db.Integer, nullable=True)
-    datecreated = db.Column(db.DateTime, nullable=True)
+    datecreated = db.Column(db.DateTime, nullable=True, server_default=func.now())
     def __repr__(self):
         return '<UserHist %r>' % self.id
 
