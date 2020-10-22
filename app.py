@@ -10,6 +10,7 @@ from api import send_email
 from api import search_results
 from api import cart_functions
 from api import history_functions
+from api import add_to_history
 from random import shuffle
 
 app = Flask(__name__)
@@ -560,13 +561,14 @@ def payment():
         text = "Please login to an account!"
         return redirect('/login')
 
-@app.route('/deduct', methods=['POST','GET'])
+@app.route('/deduct', methods=['POST', 'GET'])
 def deduct():
     global text
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        price = request.json['total_price']
+        #price = request.json['total_price']
+        price=0
         if user_info.token - price < 0:
             return render_template('deduct.html')
         else:
@@ -583,8 +585,17 @@ def receipt():
     global userCart
     if userID!=0:
         user = User.query.get(userID)
-        if text != "Tokens deducted! Thank you for your purchase!":
-            text = ""
+        user_info = UserInfo.query.get(userID)
+
+        
+        if add_to_history.addHistory(user):
+            send_email.send_receipt(user)
+            if add_to_history.deleteCart(user):
+                text="success"
+            else:
+                text="delete not ok"
+        else:
+            text="adding not ok"
         return render_template('receipt.html', user=user, text=text)
     else:
         text = "Please login to an account!"
