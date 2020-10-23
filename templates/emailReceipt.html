@@ -3,13 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .total {
+            background-color:palegreen;
+            font-weight: bold;
+        }
+
+        .footer {
+	        color: #888;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div>
         <h2>Hello {{name}}!</h2>
 
         <p>
-            Thank you for purchasing from our website! Below is your purchase receipt.
+            Below is your purchase receipt.
         </p>
 
         <table>
@@ -25,16 +48,19 @@
                     <td>{{ item.cost }}</td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td>Total (Paid)</td>
+            <tr class="total">
+                <td colspan="2">Total (Paid)</td>
                 <td>S$ {{total}}</td>
             </tr>
         </table>
 
+        <p>
+            Thank you for purchasing from our website! 
+        </p>
         <hr>
-            <p class="footer">
-                Copyright &copy; 2020 &mdash; DanielTechTips
-            </p>
+        <p class="footer">
+            Copyright &copy; 2020 &mdash; DanielTechTips
+        </p>
     </div>
 </body>
 </html>

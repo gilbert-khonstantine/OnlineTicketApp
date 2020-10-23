@@ -17,14 +17,15 @@ def send_2fa(user):
 
 def send_receipt(user):
     from app import db, Cart, mail
+    import re
     cart = Cart.query.filter_by(user_id=user.id).all()
 
     total = 0
     for item in cart:
-        total = total + (float(item.cost[2:]) * float(item.quantity))
+        total = total + (float(re.sub('[S$]', '', item.cost)) * float(item.quantity))
     
     total = str("%.2f" % round(total,2))
 
-    msg = Message('2FA', sender = 'danieltechtips2006@gmail.com', recipients = ['danieltechtips2006@gmail.com'])
+    msg = Message('Purchase Receipt', sender = 'danieltechtips2006@gmail.com', recipients = ['danieltechtips2006@gmail.com'])
     msg.html = render_template('emailReceipt.html', name=user.name, cart=cart, total=total)
     mail.send(msg)

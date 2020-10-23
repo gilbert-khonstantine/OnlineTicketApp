@@ -608,7 +608,6 @@ def receipt():
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
 
-        
         if add_to_history.addHistory(user):
             send_email.send_receipt(user)
             if add_to_history.deleteCart(user):
