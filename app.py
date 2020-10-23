@@ -210,6 +210,8 @@ def home():
             return redirect('/results/'+word)
         else:
             top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
+            for row in range(len(top12_product)):
+                top12_product[row].price = re.sub('[S$]','',top12_product[row].price)
             print(top12_product[0].view_count)
             print(top12_product[0].title)
             print(top12_product[2].title)
@@ -257,7 +259,9 @@ def home():
                 fav = all_fav[0:12]
             else:
                 fav = all_fav
-                
+            for row in range(len(fav)):
+                fav[row].price = re.sub('[S$]','',fav[row].price)
+
             print(len(all_fav), *[p for p in fav], sep='\n')
             return render_template('home.html', user=user, text=text, products = top12_product, fav=fav, numloop=len(all_fav))
     else:
@@ -443,7 +447,7 @@ def bank():
                     text='Wrong 2FA'
                     return render_template('bank.html', user=user, text=text)
             else:
-                text="Wrong card details"
+                text="Wrong card details, 16 digits, card starts with 4"
                 return render_template('bank.html', user=user, text=text)
         else:
             twofa = send_email.send_2fa(user)
