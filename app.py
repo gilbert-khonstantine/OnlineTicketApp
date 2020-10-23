@@ -566,35 +566,35 @@ def payment():
             total = total + float(price[i]) * float(quan[i])
         total = "S$" + str(total)
         text=""
-        if request.method == "POST":
-            return deduct(total)
-        else:
-            return render_template('payment.html',
-                                    user = user,
-                                    tokens = user_info.token,
-                                    product = results[1],
-                                    quantity = results[2],
-                                    cost = results[3],
-                                    total = total)
+        return render_template('payment.html',
+                                user = user,
+                                tokens = user_info.token,
+                                product = results[1],
+                                quantity = results[2],
+                                cost = results[3],
+                                total = total)
     else:
         text = "Please login to an account!"
         return redirect('/login')
 
-def deduct(total):
+@app.route('/deduct', methods=['POST','GET'])
+def deduct():
     global text
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        price = total[2:]
-        if user_info.token - float(price) < 0:
+        total = request.json['total_price']
+        price=total
+        print(price)
+        if user_info.token - int(price) < 0:
             text = "Insufficient tokens, please top-up. Your total cart price is: " + total
-            return render_template('deduct.html')
+            return {'msg':'failed'}
         else:
-            balance = user_info.token - float(price)
+            balance = user_info.token - int(price)
             user_info.token = int(balance)
             db.session.commit()
             text="Tokens deducted"
-            return redirect('/receipt')
+            return {'msg':'success'}
     else:
         text = "Please login to an account!"
         return redirect('/login')

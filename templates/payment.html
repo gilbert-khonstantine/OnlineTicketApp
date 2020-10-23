@@ -2,6 +2,36 @@
 
 {% block head %}
 <title>Payment</title>
+<script type=text/javascript>
+    function PassValue(total) {
+        let price = String(total)
+        let check_price = { total_price:price }
+        console.log(check_price);
+        fetch('http://localhost:5000/deduct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(check_price),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.msg == 'failed')
+            {
+                alert("Insufficient funds, please click OK and we will redirect you to the token page!")
+                window.location.replace("http://localhost:5000/tokens");
+            }
+            else if (data.msg == 'success')
+            {
+                window.location.replace("http://localhost:5000/receipt");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 {% endblock %}
 
 {% block body %}
@@ -75,11 +105,7 @@
     </table>
 </div>
 
-<form class="form" name='myform' method="POST" onsubmit=''>
-    <button type="submit" class="btn btn-primary btn-block" action="check_tokens({{tokens}},{{total}})">
-        Pay!
-    </button>
-</form>
+<button onclick='PassValue(20);' class='btn btn-default'>Pay</button>
 
 <!-- <h2>{{ user.name }}'s Payment</h2>
     <a href="/home"><input type=button value="Return Home"></a>
