@@ -22,7 +22,7 @@ def send_receipt(user):
 
     total = 0
     for item in cart:
-        total = total + (float(re.sub('[S$]', '', item.cost)) * float(item.quantity))
+        total = total + (float(item.cost) * float(item.quantity))
     
     total = str("%.2f" % round(total,2))
 

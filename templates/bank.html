@@ -48,7 +48,7 @@
         </div>
         <div class="form-group">
             <label for="name">Enter 2FA: (2FA will be sent to your email)</label>
-            <input class="form-control" type="text" name="twofa"><br>
+            <input class="form-control" type="text" name="twofa"  onkeyup="this.value = this.value.toUpperCase();"><br>
         </div>
         <input class="btn btn-primary" type="submit" value="Go!" />
     </form>

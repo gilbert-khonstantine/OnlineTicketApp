@@ -548,7 +548,7 @@ def payment():
         total = 0
         price = list.copy(results[3])
         quan = list.copy(results[2])
-        price = [re.sub("[S$]",'',p) for p in price]
+        print(price)
         for i in range(results[0]):
             total = total + float(price[i]) * float(quan[i])
         total = "S$" + str(total)
