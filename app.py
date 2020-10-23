@@ -5,13 +5,13 @@ from flask_cors import CORS
 from sqlalchemy import and_, func
 from api import verify_email
 from api import verify_profile
-from api import make_payment
 from api import send_email
 from api import search_results
 from api import cart_functions
 from api import history_functions
 from api import add_to_history
 from random import shuffle
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -50,7 +50,7 @@ class UserInfo(db.Model):
     def __repr__(self):
         return '<UserInfo %r>' % self.id
 
-# Purchase history (2 primary keys)
+# Purchase history
 class UserHist(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
@@ -71,7 +71,7 @@ class UserFav(db.Model):
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
-# Payment info
+''' Unused class
 class Payment(db.Model):
     __tablename__ = 'payment'
     id = db.Column(db.Integer, primary_key=True)
@@ -82,7 +82,7 @@ class Payment(db.Model):
     def __repr__(self):
         return '<Payment %r>' % self.id
 
-# Item info
+Unused class
 class Item(db.Model):
     __tablename__ = 'item'
     id = db.Column(db.Integer, primary_key=True)
@@ -92,7 +92,7 @@ class Item(db.Model):
         
     def __repr__(self):
         return '<Item %r>' % self.id
-    
+''' 
 # Product info
 class Product(db.Model):
     __tablename__ = 'product'
@@ -109,6 +109,7 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product %r>' % self.id
 
+# All user's cart info
 class Cart(db.Model):
     __tablename__ = 'cart'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -153,10 +154,8 @@ def login():
 def logout():
     global userID
     global text
-    global userCart
     if userID!=0:
         userID = 0
-        userCart =[]
         text = "Logged out successfully!"
         return redirect("/login")
     else:
@@ -460,18 +459,14 @@ def results(word):
     global text
     search = word
     if userID!=0:
-        if request.method=='POST':
-            word = request.form['search']
-            return render_template('/results/'+word)
-        else:
-            result = search_results.get_results(search)
-            return render_template('results.html',
-                                    word=search,
-                                    text="Here are the results",
-                                    pid=result[0],
-                                    title=result[1],
-                                    price=result[2],
-                                    image=result[3])
+        result = search_results.get_results(search)
+        return render_template('results.html',
+                                word=search,
+                                text="Here are the results",
+                                pid=result[0],
+                                title=result[1],
+                                price = [re.sub('[S$]','', p) for p in result[2]],
+                                image=result[3])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -486,7 +481,7 @@ def details(id):
                                 word=product_id,
                                 text="Here are the details",
                                 title=result[0],
-                                price=result[1],
+                                price = re.sub('[S$]','', result[1]),
                                 duration=result[2],
                                 description=result[3],
                                 image=result[4])
@@ -498,12 +493,6 @@ def details(id):
 def add_to_cart():
     title = request.json['product_title']
     cost = request.json['product_price']
-    # have = Cart.query.filter(
-    #         and_(
-    #             Cart.product.filter(title),
-    #             Cart.user_id.filter(userID)
-    #         )
-    #     ).all()
     have = Cart.query.filter_by(product = title, cost = cost, user_id = userID).all()
     if have == []:
         newItem = Cart(user_id=userID,product=title,quantity=1,cost=cost)
@@ -513,7 +502,6 @@ def add_to_cart():
     db.session.commit()
     return {"msg":"success"}
 
-#in progress
 @app.route('/cart', methods=['POST','GET'])
 def cart():
     global text
@@ -524,7 +512,6 @@ def cart():
     else:
         text = "Please login to an account!"
         return redirect('/login')
-
 
 @app.route('/updatecart', methods=['POST','GET'])
 def updatecart():
@@ -561,8 +548,8 @@ def payment():
         total = 0
         price = list.copy(results[3])
         quan = list.copy(results[2])
+        price = [re.sub("[S$]",'',p) for p in price]
         for i in range(results[0]):
-            price[i]=price[i][2:]
             total = total + float(price[i]) * float(quan[i])
         total = "S$" + str(total)
         text=""
@@ -586,12 +573,12 @@ def deduct():
         total = request.json['total_price']
         price=total
         print(price)
-        if user_info.token - int(price) < 0:
-            text = "Insufficient tokens, please top-up. Your total cart price is: " + total
+        if user_info.token - float(price) < 0:
+            text = "Insufficient tokens, please top-up. Your total cart price is: S$" + total
             return {'msg':'failed'}
         else:
-            balance = user_info.token - int(price)
-            user_info.token = int(balance)
+            balance = user_info.token - float(price)
+            user_info.token = float(balance)
             db.session.commit()
             text="Tokens deducted"
             return {'msg':'success'}
@@ -599,11 +586,9 @@ def deduct():
         text = "Please login to an account!"
         return redirect('/login')
 
-#in progress
 @app.route('/receipt')
 def receipt():
     global text
-    global userCart
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)

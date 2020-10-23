@@ -52,11 +52,15 @@
         <img src={{image}}><br>
         Description = {{description}}<br>
         Duration(if it is a movie): {{duration}}<br>
-        Price: {{price}}<br>
+        Price: S${{price}}<br>
         <button class="btn btn-success" id="addToCart" action="add_to_cart({{title}},{{price}})">Add to cart!</button>
         <div id="addToCartStatus"></div>
         <!-- {{text}} -->
     </div>
+    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+        <input type="text" name="search">
+        <button type="submit" class="button">Search</button>
+    </form>
     <script>
         let addToCart = document.getElementById("addToCart");
         addToCart.addEventListener('click', () => {

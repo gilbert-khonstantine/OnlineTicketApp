@@ -4,6 +4,7 @@ from flask import Flask, render_template, url_for, request, redirect, jsonify
 
 def getCart(id):
     from app import db, Cart
+    import re
     cart = Cart.query.filter_by(user_id=id).all()
     length = len(cart)
     id = []
@@ -15,6 +16,7 @@ def getCart(id):
         product.append(cart[i].product)
         quantity.append(cart[i].quantity)
         cost.append(cart[i].cost)
+    
     return length, product, quantity, cost
 
 

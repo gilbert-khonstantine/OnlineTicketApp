@@ -3,7 +3,9 @@
 {% block head %}
 <title>Payment</title>
 <script type=text/javascript>
-    function PassValue(total) {
+    var total = "{{total}}";
+    total = total.substring(2)
+    function PassValue() {
         let price = String(total)
         let check_price = { total_price:price }
         console.log(check_price);
@@ -88,7 +90,7 @@
             <tr>
                 <th scope="col">Product</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Price per Item</th>
+                <th scope="col">Price (S$)</th>
             </tr>
         </thead>
         {% for row in range(product|length) %}
@@ -105,19 +107,5 @@
     </table>
 </div>
 
-<button onclick='PassValue(20);' class='btn btn-default'>Pay</button>
-
-<!-- <h2>{{ user.name }}'s Payment</h2>
-    <a href="/home"><input type=button value="Return Home"></a>
-    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
-    <a href=/logout><input type=button value='Logout'></a>
-    <br>
-    <br> Items: {{itemlist}} </br>
-	<br> Shipping: {{shipping}} </br>
-	<br> Pay by: {{payment_method}} </br>
-	<br> Subtotal: {{subtotal}} </br>
-	<br> Discount: {{discount}} </br>
-	<br> Total: {{total}} </br>
-    <br>
-    <a href=/deduct><input type=button value='Pay!'></a> -->
+<button onclick='PassValue();' class='btn btn-default'>Pay</button>
 {% endblock %}

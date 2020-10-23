@@ -1,3 +1,5 @@
+''' Unused
+
 from .utils import generate_hash, generate_jwt_token, JWT_SECRET_KEY
 import datetime
 
@@ -33,10 +35,3 @@ def validate_user_registration(input_type, **kwargs):
             return True
         else:
             return False
-
-def validate_payment(balance):
-    if balance >= 0:
-        return True
-
-    else:
-        return False

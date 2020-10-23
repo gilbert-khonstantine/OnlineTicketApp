@@ -7,7 +7,8 @@ def get_results(search_word):
     results = Product.query.filter(
         or_(
             Product.title.contains(search_word),
-            Product.tag.like(search_word)
+            Product.tag.contains(search_word),
+            Product.subtag.contains(search_word)
         )
     ).all()
 
