@@ -463,10 +463,28 @@ def results(word):
     global text
     search = word
     if userID!=0:
+        is_add_text = False
+        add_text = ''
         result = search_results.get_results(search)
+        num_results = result[4]
+
+        # if initial search returns no entry, apply spelling check
+        # display results for corrected spelling if it return entries
+        if num_results == 0:
+            corrected = search_results.check_spelling(search)
+            new_result = search_results.get_results(corrected)
+            num_new_results = new_result[4]
+
+            if num_new_results != num_results:
+                is_add_text = True
+                add_text = 'Displaying results for ' + corrected + ' instead'
+                result = new_result
+        
         return render_template('results.html',
                                 word=search,
                                 text="Here are the results",
+                                is_add_text = is_add_text,
+                                add_text = add_text,
                                 pid=result[0],
                                 title=result[1],
                                 price = [re.sub('[S$]','', p) for p in result[2]],
