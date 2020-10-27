@@ -32,10 +32,8 @@ df_temp2['Price'] = df_temp2.apply(lambda row: check2Dor3D(row), axis=1) # price
 
 # edit Museum
 df_temp3 = df_museum
-df_temp3.columns = ['Title', 'Price', 'Description', 'Tag', 'Subtag']
+df_temp3.columns = ['Title', 'Price', 'Description', 'Tag', 'Subtag', 'Image link']
 df_temp3.insert(loc=2, column='Duration', value='NA') # add duration column
-df_temp3.insert(loc=4, column='Image link', value='NA') # add image link column
-
 
 # write into csv file
 df_final = df_temp
