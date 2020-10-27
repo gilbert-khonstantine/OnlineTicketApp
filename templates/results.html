@@ -46,6 +46,11 @@
 </div>
 <div class="container">
     <h2>Search results on {{word}}</h2>
+	
+	{% if is_add_text == True %}
+	<h3> {{add_text}} </h3>
+	{% endif %}
+	
     {{text}}
     <table class="table table-hover table-bordered">
         <thead>
