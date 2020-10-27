@@ -464,6 +464,8 @@ def results(word):
             return render_template('/results/'+word)
         else:
             result = search_results.get_results(search)
+            print(result)
+            print("number of results: " + str(len(result[0])))
             return render_template('results.html',
                                     word=search,
                                     text="Here are the results",

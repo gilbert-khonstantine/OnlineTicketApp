@@ -1,29 +1,68 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>History</title>
+<title>History</title>
 {% endblock %}
 
 {% block body %}
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
+                        Home</a></li>
+                <li class="nav-item dropdown"><a class=" nav-link dropdown-toggle" role="button" data-toggle="dropdown"
+                        href="/profile"><span class="fa fa-user fa-lg"></span>
+                        Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/profile">Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/favourites">Favourites</a>
+                        <a class="dropdown-item" href="/history">Purchase History</a>
+                        <a class="dropdown-item" href="/tokens">Tokens</a>
+                    </div>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                        Cart</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
+                        Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h3>C</h3>
+            <hr>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <ol class="col-12 breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+            <li class="breadcrumb-item active">Purchase History</li>
+        </ol>
+    </div>
     <h2>{{ user.name }}'s Purchase History</h2>
-    <br>
-    <a href="/home"><input type="button" value="Return Home"></a>
-    <a href="/profile"><input type="button" value="Profile"></a>
-    <a href="/favourites"><input type="button" value="Favourites"></a>
-    <a href="/tokens"><input type="button" value="Tokens"></a>
-    <a href="/logout"><input type="button" value="Logout"></a>
-    <br>
-    <h3><strong>History</strong></h3>
-    <br>
-        <table class="table table-hover" id="HistoryTable">
+    <table class="table table-hover" id="HistoryTable">
         <thead>
-        <tr>
-            <th scope="col">Product</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Cost (Token)</th>
-            <th scope="col">DateTime</th>
-        </tr>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Cost (Token)</th>
+                <th scope="col">DateTime</th>
+            </tr>
         </thead>
+        {% if product[0] != None %}
         {% for row in range(len) %}
         <tr>
             <td class="c3">{{product[row]}}</td>
@@ -32,6 +71,12 @@
             <td class="c3">{{datetime[row]}}</td>
         </tr>
         {% endfor %}
+        {% endif %}
     </table>
+    {% if product[0] == None %}
+    <p class="text-center"> You have not purchase any product click <a href="/home">here</a> to explore our products
+    </p>
+    {% endif %}
 
+</div>
 {% endblock %}
