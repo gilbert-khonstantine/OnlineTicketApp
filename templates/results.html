@@ -25,11 +25,7 @@
                         <a class="dropdown-item" href="/tokens">Tokens</a>
                     </div>
                 </li>
-<<<<<<< HEAD
-                <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
-=======
                 <li class="nav-item "><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
->>>>>>> master
                         Cart</a>
                 </li>
             </ul>
@@ -49,21 +45,18 @@
     </div>
 </div>
 <div class="container">
-<<<<<<< HEAD
-=======
     <div class="row">
         <ol class="col-12 breadcrumb">
             <li class="breadcrumb-item"><a href="/home">Home</a></li>
             <li class="breadcrumb-item active">Search Results</li>
         </ol>
     </div>
->>>>>>> master
     <h2>Search results on {{word}}</h2>
-	
-	{% if is_add_text == True %}
-	<h3> {{add_text}} </h3>
-	{% endif %}
-	
+
+    {% if is_add_text == True %}
+    <h3> {{add_text}} </h3>
+    {% endif %}
+
     {{text}}
     <!-- <table class="table table-hover table-bordered">
         <thead>
@@ -87,10 +80,8 @@
             </td>
         </tr>
         {% endfor %}
-<<<<<<< HEAD
     </table>
     <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
-=======
     </table> -->
     <div id="addToCartStatus">
     </div>
@@ -112,9 +103,9 @@
         {% endfor %}
     </div>
     <form>
->>>>>>> master
         <input type="text" name="search">
-        <button type="submit" class="button">Search</button>
+        <button type="submit" class="form-inline" autocomplete="off" spellcheck="false" action="/home"
+            method="POST">Search</button>
     </form>
 </div>
 <script>

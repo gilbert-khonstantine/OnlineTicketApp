@@ -396,6 +396,7 @@ def history():
         user = User.query.get(userID)
         data = history_functions.getPurchaseHist(userID)
         text = "Buy more products"
+        print(data)
         return render_template('history.html', user=user,len=data[0],product=data[1],quantity=data[2],cost=data[3], datetime=data[4])
     else:
         text = "Please login to an account!"
