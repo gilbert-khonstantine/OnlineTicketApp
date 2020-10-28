@@ -10,5 +10,39 @@
     <a href="/profile"><input type="button" value="View/Edit Profile"></a>
     <a href=/logout><input type=button value='Logout'></a>
     <br>
-    {{text}}
+
+    <div>
+        <h2>Purchase success!</h2>
+
+        <p>
+            Below is your purchase receipt. A copy will be emailed to you as well!
+        </p>
+
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per Item (S$)</th>
+            </tr>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.product }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.cost }}</td>
+                </tr>
+            {% endfor %}
+            <tr class="total">
+                <td colspan="2">Total (Paid)</td>
+                <td>{{total}}</td>
+            </tr>
+        </table>
+
+        <p>
+            Thank you for purchasing from our website! 
+        </p>
+        <hr>
+        <p class="footer">
+            Copyright &copy; 2020 &mdash; DanielTechTips
+        </p>
+    </div>
 {% endblock %}

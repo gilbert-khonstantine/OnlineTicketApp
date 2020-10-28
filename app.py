@@ -575,7 +575,7 @@ def payment():
         print(price)
         for i in range(results[0]):
             total = total + float(price[i]) * float(quan[i])
-        total = "S$" + str(total)
+        total = str("%.2f" % round(total,2))
         text=""
         return render_template('payment.html',
                                 user = user,
@@ -596,14 +596,11 @@ def deduct():
         user_info = UserInfo.query.get(userID)
         total = request.json['total_price']
         price=total
-        print(price)
+        print("price = " + price)
         if user_info.token - float(price) < 0:
             text = "Insufficient tokens, please top-up. Your total cart price is: S$" + total
             return {'msg':'failed'}
         else:
-            balance = user_info.token - float(price)
-            user_info.token = float(balance)
-            db.session.commit()
             text="Tokens deducted"
             return {'msg':'success'}
     else:
@@ -618,14 +615,19 @@ def receipt():
         user_info = UserInfo.query.get(userID)
 
         if add_to_history.addHistory(user):
-            send_email.send_receipt(user)
+            result = send_email.send_receipt(user)
             if add_to_history.deleteCart(user):
                 text="success"
             else:
                 text="delete not ok"
         else:
-            text=text+"adding not ok"
-        return render_template('receipt.html', user=user, text=text)
+            text="adding not ok"
+
+        balance = user_info.token - float(result[1])
+        user_info.token = float(balance)
+        db.session.commit()
+
+        return render_template('receipt.html', user=user, cart=result[0], total=str("%.2f" % round(result[1],2)))
     else:
         text = "Please login to an account!"
         return redirect('/login')
