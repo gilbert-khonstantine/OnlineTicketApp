@@ -25,7 +25,11 @@
                         <a class="dropdown-item" href="/tokens">Tokens</a>
                     </div>
                 </li>
+<<<<<<< HEAD
                 <li class="nav-item"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+=======
+                <li class="nav-item "><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+>>>>>>> master
                         Cart</a>
                 </li>
             </ul>
@@ -45,6 +49,15 @@
     </div>
 </div>
 <div class="container">
+<<<<<<< HEAD
+=======
+    <div class="row">
+        <ol class="col-12 breadcrumb">
+            <li class="breadcrumb-item"><a href="/home">Home</a></li>
+            <li class="breadcrumb-item active">Search Results</li>
+        </ol>
+    </div>
+>>>>>>> master
     <h2>Search results on {{word}}</h2>
 	
 	{% if is_add_text == True %}
@@ -52,7 +65,7 @@
 	{% endif %}
 	
     {{text}}
-    <table class="table table-hover table-bordered">
+    <!-- <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th scope="col">Product ID</th>
@@ -74,10 +87,75 @@
             </td>
         </tr>
         {% endfor %}
+<<<<<<< HEAD
     </table>
     <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+=======
+    </table> -->
+    <div id="addToCartStatus">
+    </div>
+    <div class="row row-cols-3 row-cols-md-2">
+        {% for row in range(pid |length) %}
+
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img class="img-fluid" style="width:400px;height:280px;" src={{image[row]}}>
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{title[row]}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{price[row]}}</h6>
+                    <a href="#" onclick="addToCart('{{title[row]}}','{{price[row]}}')" class="card-link">Add to cart</a>
+                    <a onclick="updateViewCount({{pid[row]}})" class="card-link" href="/details/{{pid[row]}}">View</a>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    <form>
+>>>>>>> master
         <input type="text" name="search">
         <button type="submit" class="button">Search</button>
     </form>
 </div>
+<script>
+    function addToCart(title, price) {
+        console.log("add to cart")
+        let productAdded = { product_title: title, product_price: price }
+        console.log(productAdded)
+        fetch('http://localhost:5000/add_to_cart', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productAdded),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                let addToCartStatus = document.getElementById("addToCartStatus");
+                addToCartStatus.innerHTML = "<p class='text-success'>Item Added!</p>"
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    function updateViewCount(id) {
+        const data = { product_id: id };
+        fetch('http://localhost:5000/update_view_count', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+</script>
 {% endblock %}

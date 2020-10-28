@@ -463,6 +463,7 @@ def results(word):
     global text
     search = word
     if userID!=0:
+
         is_add_text = False
         add_text = ''
         result = search_results.get_results(search)
