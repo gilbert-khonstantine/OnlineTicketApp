@@ -86,6 +86,7 @@
         {% endfor %}
     </table>
     <p1></p1>
+    <a><input class="btn btn-success"  onclick="CheckCart();" type=button value='Proceed to Payment'></a>
     <script type="text/javascript">
         function CartDelete(ctl) {
             var $this = $(ctl);
@@ -137,8 +138,17 @@
                     console.error('Error:', error);
                 });
         }
+
+        function CheckCart() {
+            if ("{{len}}" == 0) {
+                alert("Your cart is empty, you can purchase something by adding it to the cart.")
+                window.location.replace("http://localhost:5000/home");
+            } else {
+                window.location.replace("http://localhost:5000/payment");
+            }
+        }
     </script>
-    <a href=/payment><input class="btn btn-success" type=button value='Proceed to Payment'></a>
+    
 
 
 </div>

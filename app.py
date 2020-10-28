@@ -583,7 +583,8 @@ def payment():
                                 product = results[1],
                                 quantity = results[2],
                                 cost = results[3],
-                                total = total)
+                                total = total,
+                                length=results[0])
     else:
         text = "Please login to an account!"
         return redirect('/login')
