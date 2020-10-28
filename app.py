@@ -2,15 +2,16 @@ from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask_cors import CORS
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from api import verify_email
 from api import verify_profile
-from api import make_payment
 from api import send_email
 from api import search_results
 from api import cart_functions
 from api import history_functions
+from api import add_to_history
 from random import shuffle
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -49,14 +50,14 @@ class UserInfo(db.Model):
     def __repr__(self):
         return '<UserInfo %r>' % self.id
 
-# Purchase history (2 primary keys)
+# Purchase history
 class UserHist(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
     product = db.Column(db.String(255), nullable=True)
     quantity = db.Column(db.Integer, nullable = True)
     cost = db.Column(db.Integer, nullable=True)
-    datecreated = db.Column(db.DateTime, nullable=True)
+    datecreated = db.Column(db.DateTime, nullable=True, server_default=func.now())
     def __repr__(self):
         return '<UserHist %r>' % self.id
 
@@ -70,7 +71,7 @@ class UserFav(db.Model):
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
-# Payment info
+''' Unused class
 class Payment(db.Model):
     __tablename__ = 'payment'
     id = db.Column(db.Integer, primary_key=True)
@@ -81,7 +82,7 @@ class Payment(db.Model):
     def __repr__(self):
         return '<Payment %r>' % self.id
 
-# Item info
+Unused class
 class Item(db.Model):
     __tablename__ = 'item'
     id = db.Column(db.Integer, primary_key=True)
@@ -91,7 +92,7 @@ class Item(db.Model):
         
     def __repr__(self):
         return '<Item %r>' % self.id
-    
+''' 
 # Product info
 class Product(db.Model):
     __tablename__ = 'product'
@@ -108,6 +109,7 @@ class Product(db.Model):
     def __repr__(self):
         return '<Product %r>' % self.id
 
+# All user's cart info
 class Cart(db.Model):
     __tablename__ = 'cart'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -152,10 +154,8 @@ def login():
 def logout():
     global userID
     global text
-    global userCart
     if userID!=0:
         userID = 0
-        userCart =[]
         text = "Logged out successfully!"
         return redirect("/login")
     else:
@@ -210,6 +210,8 @@ def home():
             return redirect('/results/'+word)
         else:
             top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
+            for row in range(len(top12_product)):
+                top12_product[row].price = re.sub('[S$]','',top12_product[row].price)
             print(top12_product[0].view_count)
             print(top12_product[0].title)
             print(top12_product[2].title)
@@ -257,7 +259,9 @@ def home():
                 fav = all_fav[0:12]
             else:
                 fav = all_fav
-                
+            for row in range(len(fav)):
+                fav[row].price = re.sub('[S$]','',fav[row].price)
+
             print(len(all_fav), *[p for p in fav], sep='\n')
             return render_template('home.html', user=user, text=text, products = top12_product, fav=fav, numloop=len(all_fav))
     else:
@@ -443,7 +447,7 @@ def bank():
                     text='Wrong 2FA'
                     return render_template('bank.html', user=user, text=text)
             else:
-                text="Wrong card details"
+                text="Wrong card details, 16 digits, card starts with 4"
                 return render_template('bank.html', user=user, text=text)
         else:
             twofa = send_email.send_2fa(user)
@@ -459,20 +463,33 @@ def results(word):
     global text
     search = word
     if userID!=0:
-        if request.method=='POST':
-            word = request.form['search']
-            return render_template('/results/'+word)
-        else:
-            result = search_results.get_results(search)
-            print(result)
-            print("number of results: " + str(len(result[0])))
-            return render_template('results.html',
-                                    word=search,
-                                    text="Here are the results",
-                                    pid=result[0],
-                                    title=result[1],
-                                    price=result[2],
-                                    image=result[3])
+
+        is_add_text = False
+        add_text = ''
+        result = search_results.get_results(search)
+        num_results = result[4]
+
+        # if initial search returns no entry, apply spelling check
+        # display results for corrected spelling if it return entries
+        if num_results == 0:
+            corrected = search_results.check_spelling(search)
+            new_result = search_results.get_results(corrected)
+            num_new_results = new_result[4]
+
+            if num_new_results != num_results:
+                is_add_text = True
+                add_text = 'Displaying results for ' + corrected + ' instead'
+                result = new_result
+        
+        return render_template('results.html',
+                                word=search,
+                                text="Here are the results",
+                                is_add_text = is_add_text,
+                                add_text = add_text,
+                                pid=result[0],
+                                title=result[1],
+                                price = [re.sub('[S$]','', p) for p in result[2]],
+                                image=result[3])
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -487,7 +504,7 @@ def details(id):
                                 word=product_id,
                                 text="Here are the details",
                                 title=result[0],
-                                price=result[1],
+                                price = re.sub('[S$]','', result[1]),
                                 duration=result[2],
                                 description=result[3],
                                 image=result[4])
@@ -499,12 +516,6 @@ def details(id):
 def add_to_cart():
     title = request.json['product_title']
     cost = request.json['product_price']
-    # have = Cart.query.filter(
-    #         and_(
-    #             Cart.product.filter(title),
-    #             Cart.user_id.filter(userID)
-    #         )
-    #     ).all()
     have = Cart.query.filter_by(product = title, cost = cost, user_id = userID).all()
     if have == []:
         newItem = Cart(user_id=userID,product=title,quantity=1,cost=cost)
@@ -514,7 +525,6 @@ def add_to_cart():
     db.session.commit()
     return {"msg":"success"}
 
-#in progress
 @app.route('/cart', methods=['POST','GET'])
 def cart():
     global text
@@ -526,16 +536,30 @@ def cart():
         text = "Please login to an account!"
         return redirect('/login')
 
-
 @app.route('/updatecart', methods=['POST','GET'])
 def updatecart():
     name = request.json['product_title']
     qty = request.json['product_qty']
-    cart.functions.UpdateCart(userID, name, qty)
-    print(name)
-    print(qty)
+    price = request.json['product_price']
+    action = request.json['action']
+    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    # user_id = db.Column(db.Integer, nullable=False)
+    # product = db.Column(db.String(1000), nullable=False)
+    # quantity = db.Column(db.Integer, nullable=False)
+    # cost = db.Column(db.Integer, nullable=False)
+    if action == "add":
+        # selected_item = Cart.query.filter_by(product=name,quantity=qty,cost=price).all()
+        selected_item = Cart.query.filter_by(product=name,quantity=int(qty)-1).all()[-1]
+        selected_item.quantity = selected_item.quantity + 1
+    elif action == "subtract":
+        selected_item = Cart.query.filter_by(product=name,quantity=int(qty)+1).all()[-1]
+        selected_item.quantity = selected_item.quantity - 1
+        if selected_item.quantity == 0:
+            Cart.query.filter_by(product=name,quantity=int(qty)).delete()
+    elif action == "delete":
+        Cart.query.filter_by(product=name,quantity=int(qty)).delete()
+    db.session.commit()
     return {"msg": "success"}
-
 
 @app.route('/payment', methods=['POST','GET'])
 def payment():
@@ -543,36 +567,63 @@ def payment():
     if userID!=0:
         user = User.query.get(userID)
         user_info = UserInfo.query.get(userID)
-        token = user_info.token
-        t = make_payment.payment(token)
+        results = cart_functions.getCart(userID)
+        total = 0
+        price = list.copy(results[3])
+        quan = list.copy(results[2])
+        print(price)
+        for i in range(results[0]):
+            total = total + float(price[i]) * float(quan[i])
+        total = "S$" + str(total)
         text=""
-        if t[0]:
-            return render_template('payment.html',
-                                    the_title = 'Payment',
-                                    itemlist = t[1],
-                                    subtotal = t[2],
-                                    discount = t[3],
-                                    total = t[4],
-                                    shipping = t[5],
-                                    payment_method = t[6],
-                                    user = user)
-        else:
-            text='Insufficient tokens, please top up!'
-            return redirect('/tokens')
+        return render_template('payment.html',
+                                user = user,
+                                tokens = user_info.token,
+                                product = results[1],
+                                quantity = results[2],
+                                cost = results[3],
+                                total = total)
     else:
         text = "Please login to an account!"
         return redirect('/login')
 
-#in progress
+@app.route('/deduct', methods=['POST','GET'])
+def deduct():
+    global text
+    if userID!=0:
+        user = User.query.get(userID)
+        user_info = UserInfo.query.get(userID)
+        total = request.json['total_price']
+        price=total
+        print(price)
+        if user_info.token - float(price) < 0:
+            text = "Insufficient tokens, please top-up. Your total cart price is: S$" + total
+            return {'msg':'failed'}
+        else:
+            balance = user_info.token - float(price)
+            user_info.token = float(balance)
+            db.session.commit()
+            text="Tokens deducted"
+            return {'msg':'success'}
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
 @app.route('/receipt')
 def receipt():
     global text
-    global userCart
     if userID!=0:
         user = User.query.get(userID)
-        if text != "Tokens deducted! Thank you for your purchase!":
-            userCart=[]
-            text = ""
+        user_info = UserInfo.query.get(userID)
+
+        if add_to_history.addHistory(user):
+            send_email.send_receipt(user)
+            if add_to_history.deleteCart(user):
+                text="success"
+            else:
+                text="delete not ok"
+        else:
+            text=text+"adding not ok"
         return render_template('receipt.html', user=user, text=text)
     else:
         text = "Please login to an account!"

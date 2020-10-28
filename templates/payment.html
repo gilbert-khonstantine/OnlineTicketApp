@@ -2,6 +2,38 @@
 
 {% block head %}
 <title>Payment</title>
+<script type=text/javascript>
+    var total = "{{total}}";
+    total = total.substring(2)
+    function PassValue() {
+        let price = String(total)
+        let check_price = { total_price:price }
+        console.log(check_price);
+        fetch('http://localhost:5000/deduct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(check_price),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.msg == 'failed')
+            {
+                alert("Insufficient funds, please click OK and we will redirect you to the token page!")
+                window.location.replace("http://localhost:5000/tokens");
+            }
+            else if (data.msg == 'success')
+            {
+                window.location.replace("http://localhost:5000/receipt");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 {% endblock %}
 
 {% block body %}
@@ -53,54 +85,27 @@
         </ol>
     </div>
     <h2>{{ user.name }}'s Payment Details</h2>
-    <!-- <br> Items: {{itemlist}} </br> -->
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th scope="col">Product</th>
-                <th scope="col">Price ($)</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price (S$)</th>
             </tr>
         </thead>
-        {% for item in itemlist %}
+        {% for row in range(product|length) %}
         <tr>
-            <td class="c2">{{item[0]}}</td>
-            <td class="c3">{{item[1]}}</td>
+            <td class="c2">{{product[row]}}</td>
+            <td class="c3">{{quantity[row]}}</td>
+            <td class="c3">{{cost[row]}}</td>
         </tr>
         {% endfor %}
         <tr class="table-danger">
-            <td class="c2">Subtotal</td>
-            <td class="c3">{{subtotal}}</td>
-        </tr>
-        <tr class="table-success">
-            <td class="c2">Discount</td>
-            <td class="c3">{{discount}}</td>
-        </tr>
-        <tr class="table-danger">
-            <td class="c2">Total</td>
+            <td colspan="2" class="c2">Total</td>
             <td class="c3">{{total}}</td>
         </tr>
-        <tr class="table-info">
-            <td class="c2">Shipping</td>
-            <td class="c3">{{shipping}}</td>
-        </tr>
-        <tr class="table-info">
-            <td class="c2">Payment Option</td>
-            <td class="c3">{{payment_method}}</td>
-        </tr>
     </table>
-    <a href=/deduct><input class="btn btn-primary" type=button value='Pay!'></a>
 </div>
-<!-- <h2>{{ user.name }}'s Payment</h2>
-    <a href="/home"><input type=button value="Return Home"></a>
-    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
-    <a href=/logout><input type=button value='Logout'></a>
-    <br>
-    <br> Items: {{itemlist}} </br>
-	<br> Shipping: {{shipping}} </br>
-	<br> Pay by: {{payment_method}} </br>
-	<br> Subtotal: {{subtotal}} </br>
-	<br> Discount: {{discount}} </br>
-	<br> Total: {{total}} </br>
-    <br>
-    <a href=/deduct><input type=button value='Pay!'></a> -->
+
+<button onclick='PassValue();' class='btn btn-default'>Pay</button>
 {% endblock %}

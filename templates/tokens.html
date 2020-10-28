@@ -54,6 +54,7 @@
     </div>
     <h2>{{ user.name }}'s Tokens</h2>
     <h3><strong>Token Info</strong></h3>
+    <h3>1 Token = 1 SGD</h3>
     <br>
     <h4>Token Balance: {{user_info.token}}</h4>
     <br>
@@ -70,7 +71,7 @@
         <input type="radio" name="amount" value="50">
         <label for="name">50 tokens</label><br>
         <input type="radio" name="amount" id="amntother" value=""> <label for="amntother">Other amount: </label>
-        <input type="text" name="amntotherSpecify" id="otherAmount" value="" onchange="addValueToRadioBtn();"><br>
+        <input type="number" min='1' name="amntotherSpecify" id="otherAmount" value="" onchange="addValueToRadioBtn();"><br>
         <script>
             function addValueToRadioBtn() {
                 if (document.getElementById("amntother").checked == true) {
@@ -82,34 +83,4 @@
     </form>
     <h4>{{text}}</h4>
 </div>
-
-<!-- <h2>{{ user.name }}'s Tokens</h2>
-<br>
-<a href="/home"><input type="button" value="Return Home"></a>
-<a href="/profile"><input type="button" value="Profile"></a>
-<a href="/favourites"><input type="button" value="Favourites"></a>
-<a href="/history"><input type="button" value="Purchase History"></a>
-<a href="/logout"><input type="button" value="Logout"></a>
-<br>
-<h3><strong>Token Info</strong></h3>
-<br>
-<h4>Token Balance: {{user_info.token}}</h4>
-<br>
-<h3><strong>Top-up Token</strong></h3>
-<form name='myform' action="" method="POST" onsubmit=''>
-    <input type="radio" name="amount" value="10" checked>
-    <label for="name">10 tokens</label><br>
-    <input type="radio" name="amount" value="20">
-    <label for="name">20 tokens</label><br>
-    <input type="radio" name="amount" value="30">
-    <label for="name">30 tokens</label><br>
-    <input type="radio" name="amount" value="40">
-    <label for="name">40 tokens</label><br>
-    <input type="radio" name="amount" value="50">
-    <label for="name">50 tokens</label><br>
-    <input type="radio" name="amount" value=other> <label for="name">Other amount: </label><input type='text'
-        name='other'><br>
-    <input type="submit" value="Top up!" />
-</form>
-<h4>{{text}}</h4> -->
 {% endblock %}

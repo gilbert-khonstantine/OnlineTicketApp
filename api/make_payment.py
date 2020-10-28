@@ -1,3 +1,5 @@
+''' Unused
+
 from flask import Flask, render_template, Blueprint, request, Response, jsonify, make_response
 
 def validate_payment(balance):
@@ -29,7 +31,3 @@ def payment(token):
     
     else:
         return (False, 0)
-        
-
-
-

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .total {
+            background-color:palegreen;
+            font-weight: bold;
+        }
+
+        .footer {
+	        color: #888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Hello {{name}}!</h2>
+
+        <p>
+            Below is your purchase receipt.
+        </p>
+
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per Item</th>
+            </tr>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.product }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.cost }}</td>
+                </tr>
+            {% endfor %}
+            <tr class="total">
+                <td colspan="2">Total (Paid)</td>
+                <td>S$ {{total}}</td>
+            </tr>
+        </table>
+
+        <p>
+            Thank you for purchasing from our website! 
+        </p>
+        <hr>
+        <p class="footer">
+            Copyright &copy; 2020 &mdash; DanielTechTips
+        </p>
+    </div>
+</body>
+</html>

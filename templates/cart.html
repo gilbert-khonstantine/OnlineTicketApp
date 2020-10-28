@@ -62,18 +62,18 @@
         </ol>
     </div>
     <h2>{{ user.name }}'s Cart</h2>
-           <table class="table table-hover" id="CartTable">
-            <thead>
+    <table class="table table-hover" id="CartTable">
+        <thead>
             <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Cost (Token)</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Add/Minus</th>
-              <th scope="col">Remove</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Cost (S$)</th>
+                <th scope="col">Add/Minus</th>
+                <th scope="col">Remove</th>
             </tr>
-            </thead>
-            {% for row in range(len) %}
-            <tr>
+        </thead>
+        {% for row in range(len) %}
+        <tr>
             <td class="c2">{{product[row]}}</td>
             <td class="c2">{{quantity[row]}}</td>
             <td class="c2">{{cost[row]}}</td>
@@ -81,94 +81,73 @@
                 <button class='btn btn-default' onclick='CartPlus(this);'>+</button>
             </td>
             <td><button onclick='CartDelete(this);' class='btn btn-default'>Delete</button></td>
-            </tr>
+        </tr>
 
-            {% endfor %}
-        </table>
-        <p1></p1>
-        <script type="text/javascript">
-            function CartDelete(ctl) {
-                    $(ctl).parents("tr").remove();
-                    PassValue($(col[0]).text(), 0);
+        {% endfor %}
+    </table>
+    <p1></p1>
+    <script type="text/javascript">
+        function CartDelete(ctl) {
+            var $this = $(ctl);
+            var id = $this.parents("tr");
+            var col = id.children("td");
+            $(ctl).parents("tr").remove();
+            PassValue($(col[0]).text(), $(col[1]).text(), $(col[2]).text(), "delete");
+        }
+        function CartMinus(ctl) {
+            var $this = $(ctl);
+            var id = $this.parents("tr");
+            var col = id.children("td");
+            var current = Number($(col[1]).text().trim()) - 1;
+            if (current == 0) {
+                $($(col[1])).text(current);
+                $(ctl).parents("tr").remove();
             }
-            function CartMinus(ctl){
-                    var $this = $(ctl);
-                    var id = $this.parents("tr");
-                    var col = id.children("td");
-                    var current = Number($(col[1]).text().trim()) - 1;
-                    if(current == 0){
-                        $($(col[1])).text(1);
-                    }
-                    else{
-                        $($(col[1])).text(current);
-                    }
-                    PassValue($(col[0]).text(), $(col[1]).text());
+            else {
+                $($(col[1])).text(current);
             }
-            function CartPlus(ctl){
-                    var $this = $(ctl);
-                    var id = $this.parents("tr");
-                    var col = id.children("td");
-                    var current = Number($(col[1]).text().trim()) + 1;
-                    $($(col[1])).text(current);
-                    PassValue($(col[0]).text(), $(col[1]).text());
-            }
-            function PassValue(pname, qty){
-                    console.log("update")
-                    let name = pname, quantity = qty;
-                    name = String(name);
-                    quantity = String(quantity);
-                    let update_cart = { product_title: name, product_qty: quantity }
-                    console.log(update_cart);
-                    fetch('http://localhost:5000/updatecart', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    body: JSON.stringify(update_cart),
-                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                         })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        });
-            }
-        </script>
+            PassValue($(col[0]).text(), $(col[1]).text(), $(col[2]).text(), "subtract");
+        }
+        function CartPlus(ctl) {
+            var $this = $(ctl);
+            var id = $this.parents("tr");
+            var col = id.children("td");
+            var current = Number($(col[1]).text().trim()) + 1;
+            $($(col[1])).text(current);
+            PassValue($(col[0]).text(), $(col[1]).text(), $(col[2]).text(), "add");
+        }
+        function PassValue(pname, qty, price, action) {
+            let name = pname, quantity = qty;
+            name = String(name);
+            quantity = String(quantity);
+            let update_cart = { product_title: name, product_qty: quantity, product_price: price, action: action }
+            console.log(update_cart);
+            fetch('http://localhost:5000/updatecart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(update_cart),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
     <a href=/payment><input class="btn btn-success" type=button value='Proceed to Payment'></a>
 
 
-    <!-- <form class="form" autocomplete="off" spellcheck="false" action="/cart" method="POST">
-        <label for="name">Search:</label>
-        <input type="text" class="form-control" autofocus="autofocus" name="search">
-        <input type="submit" value="Update cart!" />
-    </form> -->
-
 </div>
 <br />
-<div class="container">
-    <form class="form-inline" autocomplete="off" spellcheck="false" action="/results" method="POST">
-        <div class="form-group ">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search Product" aria-label="Search">
-            <input type="submit" class="btn btn-primary" value="Search!" />
-        </div>
+<div class="col-12">
+    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+        <input type="text" name="search">
+        <button type="submit" class="button">Search</button>
     </form>
 </div>
-
-<!-- <h2>{{ user.name }}'s Cart</h2>
-<a href="/home"><input type=button value="Return Home"></a>
-<a href="/profile"><input type="button" value="View/Edit Profile"></a>
-<a href=/logout><input type=button value='Logout'></a>
-<br>
-<div id="result"></div>
-<br>
-{{userCart}}
-<br>
-<form class="form" autocomplete="off" spellcheck="false" action="/cart" method="POST">
-    <label for="name">Search:</label>
-    <input type="text" class="form-control" autofocus="autofocus" name="search">
-    <input type="submit" value="Update cart!" />
-</form>
-<a href=/payment><input type=button value='To payment >'></a> -->
 
 {% endblock %}
