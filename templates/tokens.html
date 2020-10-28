@@ -71,7 +71,7 @@
         <input type="radio" name="amount" value="50">
         <label for="name">50 tokens</label><br>
         <input type="radio" name="amount" id="amntother" value=""> <label for="amntother">Other amount: </label>
-        <input type="text" name="amntotherSpecify" id="otherAmount" value="" onchange="addValueToRadioBtn();"><br>
+        <input type="number" min='1' name="amntotherSpecify" id="otherAmount" value="" onchange="addValueToRadioBtn();"><br>
         <script>
             function addValueToRadioBtn() {
                 if (document.getElementById("amntother").checked == true) {
