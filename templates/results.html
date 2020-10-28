@@ -50,14 +50,15 @@
         <li class="breadcrumb-item active">Search Results</li>
     </ol>
 </div>
-<h2>Search results on {{word}}</h2>
+<div class="container">
+    <h2>Search results on {{word}}</h2>
 
-{% if is_add_text == True %}
-<h3> {{add_text}} </h3>
-{% endif %}
+    {% if is_add_text == True %}
+    <h3> {{add_text}} </h3>
+    {% endif %}
 
-{{text}}
-<!-- <table class="table table-hover table-bordered">
+    {{text}}
+    <!-- <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th scope="col">Product ID</th>
@@ -82,30 +83,30 @@
     </table>
     <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
     </table> -->
-<div id="addToCartStatus">
-</div>
-<div class="row row-cols-3 row-cols-md-2">
-    {% for row in range(pid |length) %}
+    <div id="addToCartStatus">
+    </div>
+    <div class="row row-cols-3 row-cols-md-2">
+        {% for row in range(pid |length) %}
 
-    <div class="col-md-4 mb-3">
-        <div class="card">
-            <img class="img-fluid" style="width:400px;height:280px;" src={{image[row]}}>
-            <div class="card-body">
-                <h5 class="card-title text-truncate">{{title[row]}}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{price[row]}}</h6>
-                <a href="#" onclick="addToCart('{{title[row]}}','{{price[row]}}')" class="card-link">Add to cart</a>
-                <a onclick="updateViewCount({{pid[row]}})" class="card-link" href="/details/{{pid[row]}}">View</a>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img class="img-fluid" style="width:400px;height:280px;" src={{image[row]}}>
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{title[row]}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{price[row]}}</h6>
+                    <a href="#" onclick="addToCart('{{title[row]}}','{{price[row]}}')" class="card-link">Add to cart</a>
+                    <a onclick="updateViewCount({{pid[row]}})" class="card-link" href="/details/{{pid[row]}}">View</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    {% endfor %}
-</div>
-<form>
-    <input type="text" name="search">
-    <button type="submit" class="form-inline" autocomplete="off" spellcheck="false" action="/home"
-        method="POST">Search</button>
-</form>
+        {% endfor %}
+    </div>
+    <form>
+        <input type="text" name="search">
+        <button type="submit" class="form-inline" autocomplete="off" spellcheck="false" action="/home"
+            method="POST">Search</button>
+    </form>
 </div>
 <script>
     function addToCart(title, price) {
