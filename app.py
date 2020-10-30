@@ -198,7 +198,6 @@ def register():
         text = "You're already logged in dude!"
         return redirect('/home')
 
-#in progress
 @app.route('/home', methods=['POST','GET'])
 def home():
     global text
@@ -423,42 +422,54 @@ def tokens():
 
 @app.route('/bank', methods=['POST','GET'])
 def bank():
-    global total
     global text
-    global twofa
     if userID!=0:
         user = User.query.get(userID)
-        user_info = UserInfo.query.get(userID)
         if request.method == 'POST':
             card_num = request.form['card_num']
-            twoFA =  request.form['twofa']
-            if len(card_num)==16 and card_num[0]=='4' and int(card_num):
-                if twoFA == twofa:
-                    try:
-                        user_info.token=total
-                        db.session.commit()
-                        total=0
-                        text="Tokens added!"
-                        return redirect('/tokens')
-                    except:
-                        total=0
-                        text="Transaction failed!"
-                        return redirect('/tokens')
-                else:
-                    text='Wrong 2FA'
-                    return render_template('bank.html', user=user, text=text)
+            if card_num[0]=='4' and int(card_num):
+                return redirect('/bankTwoFA')
             else:
                 text="Wrong card details, 16 digits, card starts with 4"
                 return render_template('bank.html', user=user, text=text)
         else:
-            twofa = send_email.send_2fa(user)
             text=''
             return render_template('bank.html', user=user, text=text)
     else:
         text = "Please login to an account!"
         return redirect('/login')
 
-#in progress
+@app.route('/bankTwoFA', methods=['POST','GET'])
+def send_check_twofa():
+    global twofa
+    global total
+    if userID!=0:
+        user = User.query.get(userID)
+        user_info = UserInfo.query.get(userID)
+        if request.method == 'POST':
+            twoFA =  request.form['twofa']
+            if twoFA == twofa:
+                try:
+                    user_info.token=total
+                    db.session.commit()
+                    total=0
+                    text="Tokens added!"
+                    return redirect('/tokens')
+                except:
+                    total=0
+                    text="Transaction failed!"
+                    return redirect('/tokens')
+            else:
+                text='Wrong 2FA'
+                return render_template('twofa.html', user=user, text=text)
+        else:
+            twofa = send_email.send_2fa(user)
+            text=''
+            return render_template('twofa.html', user=user, text=text)
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
 @app.route('/results/<word>', methods=['POST','GET'])
 def results(word):
     global text
@@ -640,4 +651,6 @@ if __name__ == "__main__":
     text = ""
     #Create variable to store twofa to compare with user input
     twofa = ""
+    #Create variable to hold total new funds
+    total = 0
     app.run(debug=True)

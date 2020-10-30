@@ -39,12 +39,12 @@
 <div class="container">
     <h2>{{ user.name }}'s Bank Top-up</h2>
     <br>
-    <h3><strong>Enter Bank Details</strong></h3>
+    <h3><strong>Enter 2FA Details</strong></h3>
     <br>
-    <form class="form" name='myform' action="{{ url_for('bank') }}" method="POST" onsubmit=''>
+    <form class="form" name='myform' action="" method="POST" onsubmit=''>
         <div class="form-group">
-            <label for="name">Enter card number: (16 digits)</label>
-            <input class="form-control" type="text" maxlength="16" pattern="\d{16}" name="card_num"><br>
+            <label for="name">Enter 2FA: (2FA will be sent to your email)</label>
+            <input class="form-control" type="text" name="twofa"  onkeyup="this.value = this.value.toUpperCase();"><br>
         </div>
         <input class="btn btn-primary" type="submit" value="Go!" />
     </form>
