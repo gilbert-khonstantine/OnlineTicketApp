@@ -1,16 +1,57 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <title>Receipt</title>
+<title>Receipt</title>
 {% endblock %}
 
 {% block body %}
+<nav class="navbar navbar-dark bg-primary navbar-expand-sm fixed-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/home"><span class="fa fa-home fa-lg"></span>
+                        Home</a></li>
+                <li class="nav-item dropdown"><a class=" nav-link dropdown-toggle" role="button" data-toggle="dropdown"
+                        href="/profile"><span class="fa fa-user fa-lg"></span>
+                        Profile</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/profile">Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/favourites">Favourites</a>
+                        <a class="dropdown-item" href="/history">Purchase History</a>
+                        <a class="dropdown-item" href="/tokens">Tokens</a>
+                    </div>
+                </li>
+                <li class="nav-item active"><a class="nav-link" href="/cart"><span class="fa fa-list fa-lg"></span>
+                        Cart</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+                        <input type="text" class="form-control mr-2" placeholder="Search Product" name="search">
+                        <!-- <button class="btn btn-outline-light" type="submit" class="button">Search</button> -->
+                    </form>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
+                        Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>C</h2>
+            <hr>
+        </div>
+    </div>
+</div>
+<div class="container">
     <h2>{{ user.name }}'s Receipt</h2>
-    <a href="/home"><input type=button value="Return Home"></a>
-    <a href="/profile"><input type="button" value="View/Edit Profile"></a>
-    <a href=/logout><input type=button value='Logout'></a>
-    <br>
-
     <div>
         <h2>Purchase success!</h2>
 
@@ -25,11 +66,11 @@
                 <th>Price per Item (S$)</th>
             </tr>
             {% for item in cart %}
-                <tr>
-                    <td>{{ item.product }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.cost }}</td>
-                </tr>
+            <tr>
+                <td>{{ item.product }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.cost }}</td>
+            </tr>
             {% endfor %}
             <tr class="total">
                 <td colspan="2">Total (Paid)</td>
@@ -38,11 +79,12 @@
         </table>
 
         <p>
-            Thank you for purchasing from our website! 
+            Thank you for purchasing from our website! Click <a href="/home">here</a> to shop more.
         </p>
         <hr>
         <p class="footer">
             Copyright &copy; 2020 &mdash; DanielTechTips
         </p>
     </div>
+</div>
 {% endblock %}
