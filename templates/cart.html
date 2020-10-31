@@ -40,6 +40,12 @@
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+                        <input type="text" class="form-control mr-2" placeholder="Search Product" name="search">
+                        <!-- <button class="btn btn-outline-light" type="submit" class="button">Search</button> -->
+                    </form>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
                         Logout</a></li>
             </ul>
@@ -86,7 +92,7 @@
         {% endfor %}
     </table>
     <p1></p1>
-    <a><input class="btn btn-success"  onclick="CheckCart();" type=button value='Proceed to Payment'></a>
+    <a><input class="btn btn-success" onclick="CheckCart();" type=button value='Proceed to Payment'></a>
     <script type="text/javascript">
         function CartDelete(ctl) {
             var $this = $(ctl);
@@ -148,16 +154,9 @@
             }
         }
     </script>
-    
 
 
-</div>
-<br />
-<div class="col-12">
-    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
-        <input type="text" name="search">
-        <button type="submit" class="button">Search</button>
-    </form>
+
 </div>
 
 {% endblock %}

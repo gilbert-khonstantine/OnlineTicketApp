@@ -30,6 +30,12 @@
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
+                        <input type="text" class="form-control mr-2" placeholder="Search Product" name="search">
+                        <!-- <button class="btn btn-outline-light" type="submit" class="button">Search</button> -->
+                    </form>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
                         Logout</a></li>
             </ul>
@@ -55,98 +61,98 @@
     <h2>{{ user.name }}'s Favourites</h2>
     <h3><strong>Favourites</strong></h3>
     <form class="form" autocomplete="off" spellcheck="false" action="/favourites" method="POST">
-		<h4><strong>Attractions</strong></h3>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" name="nature" {{values[0]}}
-            <label class="form-check-label">Nature</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="theme_park" {{values[1]}}>
-            <label class="form-check-label">Theme Park</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="others" {{values[2]}}>
-            <label class="form-check-label">Others</label>
-        </div>
-		</br>
+        <h4><strong>Attractions</strong></h3>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="nature" {{values[0]}} <label
+                    class="form-check-label">Nature</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="theme_park" {{values[1]}}>
+                <label class="form-check-label">Theme Park</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="others" {{values[2]}}>
+                <label class="form-check-label">Others</label>
+            </div>
+            </br>
 
-		<h4><strong>Movies</strong></h3>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" name="action" {{values[3]}}>
-            <label class="form-check-label">Action</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="adventure" {{values[4]}}>
-            <label class="form-check-label">Adventure</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="animation" {{values[5]}}>
-            <label class="form-check-label">Animation</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="comedy" {{values[6]}}>
-            <label class="form-check-label">Comedy</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="concert" {{values[7]}}>
-            <label class="form-check-label">Concert</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="drama" {{values[8]}}>
-            <label class="form-check-label">Drama</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="family" {{values[9]}}>
-            <label class="form-check-label">Family</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="fantasy" {{values[10]}}>
-            <label class="form-check-label">Fantasy</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="horror" {{values[11]}}>
-            <label class="form-check-label">Horror</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="musical" {{values[12]}}>
-            <label class="form-check-label">Musical</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="mystery" {{values[13]}}>
-            <label class="form-check-label">Mystery</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="romance" {{values[14]}}>
-            <label class="form-check-label">Romance</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="sci_fiction" {{values[15]}}>
-            <label class="form-check-label">Sci-Fiction</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="suspense" {{values[16]}}>
-            <label class="form-check-label">Suspense</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="thriller" {{values[17]}}>
-            <label class="form-check-label">Thriller</label>
-        </div>
-		</br>
-		
-		<h4><strong>Museums</strong></h3>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" name="art_design" {{values[18]}}>
-            <label class="form-check-label">Art/Design</label>
-        </div>
-		<div class="form-check">
-            <input type="checkbox" class="form-check-input" name="history" {{values[19]}}>
-            <label class="form-check-label">History</label>
-        </div>
-		</br>
+            <h4><strong>Movies</strong></h3>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="action" {{values[3]}}>
+                    <label class="form-check-label">Action</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="adventure" {{values[4]}}>
+                    <label class="form-check-label">Adventure</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="animation" {{values[5]}}>
+                    <label class="form-check-label">Animation</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="comedy" {{values[6]}}>
+                    <label class="form-check-label">Comedy</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="concert" {{values[7]}}>
+                    <label class="form-check-label">Concert</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="drama" {{values[8]}}>
+                    <label class="form-check-label">Drama</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="family" {{values[9]}}>
+                    <label class="form-check-label">Family</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="fantasy" {{values[10]}}>
+                    <label class="form-check-label">Fantasy</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="horror" {{values[11]}}>
+                    <label class="form-check-label">Horror</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="musical" {{values[12]}}>
+                    <label class="form-check-label">Musical</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="mystery" {{values[13]}}>
+                    <label class="form-check-label">Mystery</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="romance" {{values[14]}}>
+                    <label class="form-check-label">Romance</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="sci_fiction" {{values[15]}}>
+                    <label class="form-check-label">Sci-Fiction</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="suspense" {{values[16]}}>
+                    <label class="form-check-label">Suspense</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="thriller" {{values[17]}}>
+                    <label class="form-check-label">Thriller</label>
+                </div>
+                </br>
 
-        <div class="form-group">
-            <input class="btn btn-primary btn-block" type="submit" value="Save!" />
-        </div>
+                <h4><strong>Museums</strong></h3>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="art_design" {{values[18]}}>
+                        <label class="form-check-label">Art/Design</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="history" {{values[19]}}>
+                        <label class="form-check-label">History</label>
+                    </div>
+                    </br>
+
+                    <div class="form-group">
+                        <input class="btn btn-primary btn-block" type="submit" value="Save!" />
+                    </div>
     </form>
 </div>
 <h4>{{text}}</h4>
