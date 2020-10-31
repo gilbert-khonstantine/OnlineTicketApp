@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Blueprint, request, Response, jsonify, make_response
-from .verify_email import check_email
+from .verify_login import check_email
 
 def check_account(fail,new_details,user_email):
     new_name = new_details[0]

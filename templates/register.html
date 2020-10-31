@@ -30,7 +30,7 @@
                                     Your email is invalid
                                 </div>
                             </div>
-                            {{text}}
+                            <p class="text-danger">{{text}}</p>
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input id="password" type="password" class="form-control" name="password" required
@@ -39,6 +39,7 @@
                                     Password is required
                                 </div>
                             </div>
+                            <p class="text-danger">{{text_pwd}}</p>
 
                             <div class="form-group m-0">
                                 <button type="submit" class="btn btn-primary btn-block" id="register">

@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from flask_cors import CORS
 from sqlalchemy import and_, func
-from api import verify_email
+from api import verify_login
 from api import verify_profile
 from api import send_email
 from api import search_results
@@ -174,8 +174,8 @@ def register():
             new_name = request.form['name']
             new_email = request.form['email']
             new_password = request.form['password']
-            encrypted_password = hashlib.pbkdf2_hmac('sha256', str.encode(new_password), key, 100000).hex()
-            if verify_email.check_email(new_email):
+            if verify_login.check_email(new_email) and verify_login.check_password(new_password):
+                encrypted_password = hashlib.pbkdf2_hmac('sha256', str.encode(new_password), key, 100000).hex()
                 new_user = User(name=new_name, email=new_email, password=encrypted_password)
                 try:
                     db.session.add(new_user)
@@ -194,8 +194,9 @@ def register():
                     text = "Account creation failed! Unknown error!"
                     return redirect('/login')
             else:
-                text = "Invalid email!"
-                return render_template('register.html', text=text)
+                text = "" if verify_login.check_email(new_email) else "Invalid email!"
+                text_pwd = "" if verify_login.check_password(new_password) else "Password must contain at least 1 Integer, 1 uppercase letter, 1 lowercase letter, 1 special character and must be of length more than 8"
+                return render_template('register.html', text=text, text_pwd = text_pwd)
         else:
             text=""
             return render_template('register.html', text=text)
