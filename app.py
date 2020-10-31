@@ -12,11 +12,12 @@ from api import history_functions
 from api import add_to_history
 from random import shuffle
 import re
+import hashlib
 
 app = Flask(__name__)
 CORS(app)
 app.config["DEBUG"] = True
-
+key = b'44vkZtScx9FiJcDCacEm9nRkktrEfIdJLyVtHJ9e3k0='
 #Database config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketapp.db'
 db = SQLAlchemy(app)
@@ -133,8 +134,11 @@ def login():
             login_email = request.form['email']
             login_password = request.form['password']
             user_to_login = User.query.filter_by(email=str(login_email)).first()
+            hash_login_password = hashlib.pbkdf2_hmac('sha256', str.encode(login_password), key, 100000).hex()
             if user_to_login != None:
-                if user_to_login.password == login_password:
+                print(hash_login_password)
+                print(user_to_login.password)
+                if user_to_login.password == hash_login_password:
                     userID = str(user_to_login.id)
                     text = ""
                     return redirect('/home')
@@ -170,8 +174,9 @@ def register():
             new_name = request.form['name']
             new_email = request.form['email']
             new_password = request.form['password']
+            encrypted_password = hashlib.pbkdf2_hmac('sha256', str.encode(new_password), key, 100000).hex()
             if verify_email.check_email(new_email):
-                new_user = User(name=new_name, email=new_email, password=new_password)
+                new_user = User(name=new_name, email=new_email, password=encrypted_password)
                 try:
                     db.session.add(new_user)
                     db.session.commit()
