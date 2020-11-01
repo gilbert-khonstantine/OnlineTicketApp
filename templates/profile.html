@@ -72,11 +72,6 @@
             <input type="text" class="form-control" autofocus="autofocus" name="email" value="{{ user.email }}"
                 required>
         </div>
-        <div class="form-group">
-            <label for="name">Password:</label><br>
-            <input type="text" class="form-control" autofocus="autofocus" name="password" value="{{ user.password }}"
-                required>
-        </div>
         {% if user_info.age == None or user_info.age == "" %}
         <div class="form-group">
             <label for="name">Age:</label><br>
@@ -119,6 +114,7 @@
         <div class="form-group">
             <input class="btn btn-primary btn-block" type="submit" value="Save!" />
         </div>
+        <a href="/change_password" type='button'>Change Password</a>
     </form>
     <h4>{{text}}</h4>
 </div>

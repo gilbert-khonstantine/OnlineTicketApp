@@ -4,10 +4,9 @@ from .verify_login import check_email
 def check_account(fail,new_details,user_email):
     new_name = new_details[0]
     new_email = new_details[1]
-    new_password = new_details[2]
-    new_age = new_details[3]
-    new_address = new_details[4]
-    new_mobile = new_details[5]
+    new_age = new_details[2]
+    new_address = new_details[3]
+    new_mobile = new_details[4]
     fail = False
     if len(new_name) == 0:
         text = text + "Invalid username, new name not saved!\n"

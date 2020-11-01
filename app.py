@@ -297,12 +297,11 @@ def profile():
         if request.method == 'POST':
             new_name = request.form['name']
             new_email = request.form['email']
-            new_password = request.form['password']
             new_age = request.form['age']
             new_address = request.form['address']
             new_mobile = request.form['mobile']
             text=""
-            new_details = (new_name,new_email,new_password,new_age,new_address,new_mobile)
+            new_details = (new_name,new_email,new_age,new_address,new_mobile)
             user_email = user.email
             fail = False
             fail = verify_profile.check_account(fail,new_details,user_email)
@@ -310,7 +309,6 @@ def profile():
                 try:
                     user.name = new_name
                     user.email = new_email
-                    user.password = new_password
                     user_info.age = new_age
                     user_info.address = new_address
                     user_info.mobile = new_mobile                    
@@ -329,8 +327,44 @@ def profile():
                     text="Unknown error!"
                     return render_template('profile.html', user=user, user_info=user_info, text=text)
         else:
-            text=""
             return render_template('profile.html', user=user, user_info=user_info, text=text)
+    else:
+        text = "Please login to an account!"
+        return redirect('/login')
+
+@app.route('/change_password', methods=['POST','GET'])
+def change_password():
+    global text
+    if userID!=0:
+        user = User.query.get(userID)
+        if request.method=='POST':
+            old_password = request.form['old_password']
+            hash_old_password = hashlib.pbkdf2_hmac('sha256', str.encode(old_password), key, 100000).hex()
+            if user.password == hash_old_password:
+                new_password = request.form['new_password']
+                if new_password != old_password:
+                    new_password_2 = request.form['new_password_2']
+                    if new_password == new_password_2:
+                        if verify_login.check_password(new_password):
+                            encrypted_password = hashlib.pbkdf2_hmac('sha256', str.encode(new_password), key, 100000).hex()
+                            user.password = encrypted_password
+                            db.session.commit()
+                            text = "Password changed successfully"
+                            return render_template('profile.html', text=text)
+                        else:
+                            text = "Password must contain at least 1 Integer, 1 uppercase letter, 1 lowercase letter, 1 special character and must be of length more than 8"
+                            return render_template('changePassword.html', text=text)
+                    else:
+                        text = "New passwords do not match!"
+                        return render_template('changePassword.html', text=text)
+                else:
+                    text = 'Old password same as new password!'
+                    return render_template('changePassword.html', text=text)
+            else:
+                text = "Incorrect old password!"
+                return render_template('changePassword.html', text=text)
+        else:
+            return render_template('changePassword.html')
     else:
         text = "Please login to an account!"
         return redirect('/login')
