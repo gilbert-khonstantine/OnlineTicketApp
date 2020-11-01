@@ -8,7 +8,7 @@ def contains_lowercase(text):
     return len(re.findall('([a-z]+)', text)) != 0
 
 def contains_specialCharacters(text):
-    special_characters = re.compile('[@_!#$%^&*()<>?/\|}{~:]') 
+    special_characters = re.compile('[@_!#$%^&*()<>?/\|}{~:-]') 
     return special_characters.search(text) != None
 
 def contains_number(text):
