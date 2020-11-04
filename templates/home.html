@@ -108,7 +108,7 @@
                                             <h5 class="card-title text-truncate">{{products[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">S${{products[k].price}}</h6>
                                             <a href="#"
-                                                onclick="addToCart('{{products[k].title}}','{{products[k].price}}')"
+                                                onclick='addToCart("{{products[k].title}}","{{products[k].price}}")'
                                                 class="card-link">Add to cart</a>
                                             <a href="/details/{{products[k].id}}"
                                                 onclick="updateViewCount({{products[k].id}})" id={{"freq_id:%d" %k}}
@@ -134,7 +134,7 @@
                                             </h6>
 
                                             <a href="#"
-                                                onclick="addToCart('{{products[3*(i+1)+j].title}}','{{products[3*(i+1)+j].price}}')"
+                                                onclick='addToCart("{{products[3*(i+1)+j].title}}","{{products[3*(i+1)+j].price}}")'
                                                 class="card-link">Add to cart</a>
                                             <a href="/details/{{products[3*(i+1)+j].id}}"
                                                 onclick="updateViewCount({{products[3*(i+1)+j].id}})"
@@ -182,7 +182,7 @@
                                             <h5 class="card-title text-truncate">{{fav[k].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">S${{fav[k].price}}</h6>
 
-                                            <a href="#" onclick="addToCart('{{fav[k].title}}','{{fav[k].price}}')"
+                                            <a href="#" onclick='addToCart("{{fav[k].title}}","{{fav[k].price}}")'
                                                 class="card-link">Add to cart</a>
                                             <a href="/details/{{fav[k].id}}" id={{"fav_id:%d" %k}}
                                                 onclick="updateViewCount({{fav[k].id}})" class="card-link">View</a>
@@ -208,7 +208,7 @@
                                             <h5 class="card-title text-truncate">{{fav[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">S${{fav[3*(i+1)+j].price}}</h6>
                                             <a href="#" class="card-link"
-                                                onclick="addToCart('{{fav[3*(i+1)+j].title}}','{{fav[3*(i+1)+j].price}}')">Add
+                                                onclick='addToCart("{{fav[3*(i+1)+j].title}}","{{fav[3*(i+1)+j].price}}")'>Add
                                                 to cart</a>
                                             <a href="/details/{{'fav_id:%d' %(3*(i+1)+j)}}"
                                                 id={{"fav_id:%d" %(3*(i+1)+j)}}
