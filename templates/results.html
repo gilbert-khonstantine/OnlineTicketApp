@@ -100,7 +100,7 @@
                 <div class="card-body">
                     <h5 class="card-title text-truncate">{{title[row]}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{price[row]}}</h6>
-                    <a href="#" onclick="addToCart('{{title[row]}}','{{price[row]}}')" class="card-link">Add to cart</a>
+                    <a href="#" onclick='addToCart("{{title[row]}}","{{price[row]}}")' class="card-link">Add to cart</a>
                     <a onclick="updateViewCount({{pid[row]}})" class="card-link" href="/details/{{pid[row]}}">View</a>
                 </div>
             </div>
