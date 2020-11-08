@@ -40,7 +40,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.id
 
-# Other info
+# Other User info
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
@@ -72,28 +72,6 @@ class UserFav(db.Model):
     def __repr__(self):
         return '<UserFav %r>' % self.id
 
-''' Unused class
-class Payment(db.Model):
-    __tablename__ = 'payment'
-    id = db.Column(db.Integer, primary_key=True)
-    payment_items = db.relationship('Item', backref='payment', lazy='dynamic')
-    shipping = db.Column(db.String(100), nullable=False)
-    payment_method = db.Column(db.String(100), nullable=False)
-        
-    def __repr__(self):
-        return '<Payment %r>' % self.id
-
-Unused class
-class Item(db.Model):
-    __tablename__ = 'item'
-    id = db.Column(db.Integer, primary_key=True)
-    item = db.Column(db.String(100), nullable=False)
-    cost = db.Column(db.Float, nullable=False)
-    payment_id = db.Column(db.Integer, db.ForeignKey('payment.id'))
-        
-    def __repr__(self):
-        return '<Item %r>' % self.id
-''' 
 # Product info
 class Product(db.Model):
     __tablename__ = 'product'
@@ -122,6 +100,7 @@ class Cart(db.Model):
     def __repr__(self):
         return '<Cart %r>' % self.id
 
+# Create database
 db.create_all()
 
 @app.route('/')
@@ -251,7 +230,6 @@ def home():
             print(subtag_val, subtag_list)
                     
             # get products matching chosen tags
-            #temp = Product.query.filter(Product.tag.in_(tag_list)).filter(Product.subtag.in_(subtag_list)).all()
             temp = Product.query.filter(Product.tag.in_(tag_list)).all()
 
             # get products containing subtags as substring
@@ -400,7 +378,6 @@ def favourites():
 
                 user_fav.tags = tag_val
                 user_fav.subtags = subtag_val
-                #print(user_fav.tags, user_fav.subtags, sep='\n')
                 db.session.commit()
 
                 for i in range(len(subtag_names)):
@@ -594,13 +571,7 @@ def updatecart():
     qty = request.json['product_qty']
     price = request.json['product_price']
     action = request.json['action']
-    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # user_id = db.Column(db.Integer, nullable=False)
-    # product = db.Column(db.String(1000), nullable=False)
-    # quantity = db.Column(db.Integer, nullable=False)
-    # cost = db.Column(db.Integer, nullable=False)
     if action == "add":
-        # selected_item = Cart.query.filter_by(product=name,quantity=qty,cost=price).all()
         selected_item = Cart.query.filter_by(product=name,quantity=int(qty)-1).all()[-1]
         selected_item.quantity = selected_item.quantity + 1
     elif action == "subtract":
