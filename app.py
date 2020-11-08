@@ -191,7 +191,12 @@ def home():
         user = User.query.get(userID)
         if request.method=='POST':
             word=request.form['search']
-            return redirect('/results/'+word)
+            
+            if word != '' and not word.isspace():
+                return redirect('/results/'+word)
+            else:
+                return redirect('/home')
+            
         else:
             top12_product = Product.query.order_by(Product.view_count.desc()).limit(12).all() # sorting based on view count and select top 12 products
             for row in range(len(top12_product)):
