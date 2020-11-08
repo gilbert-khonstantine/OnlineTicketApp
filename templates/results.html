@@ -33,7 +33,6 @@
                 <li class="nav-item">
                     <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
                         <input type="text" class="form-control mr-2" placeholder="Search Product" name="search">
-                        <!-- <button class="btn btn-outline-light" type="submit" class="button">Search</button> -->
                     </form>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
@@ -64,31 +63,6 @@
     {% endif %}
 
     {{text}}
-    <!-- <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th scope="col">Product ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Price (S$)</th>
-                <th scope="col">Image</th>
-                <th scope="col">Details</th>
-            </tr>
-        </thead>
-
-        {% for row in range(pid |length) %}
-        <tr>
-            <td class="c3">{{pid[row]}}</td>
-            <td class="c3">{{title[row]}}</td>
-            <td class="c3">{{price[row]}}</td>
-            <td class="c3"><img src={{image[row]}}></td>
-            <td class="c3">
-                <a href="/details/{{pid[row]}}">Click for more details</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
-    </table> -->
     <div id="addToCartStatus">
     </div>
     <div class="row row-cols-3 row-cols-md-2">
@@ -99,7 +73,7 @@
                 <img class="img-fluid" style="width:400px;height:280px;" src={{image[row]}}>
                 <div class="card-body">
                     <h5 class="card-title text-truncate">{{title[row]}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{price[row]}}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">S${{price[row]}}</h6>
                     <a href="#" onclick='addToCart("{{title[row]}}","{{price[row]}}")' class="card-link">Add to cart</a>
                     <a onclick="updateViewCount({{pid[row]}})" class="card-link" href="/details/{{pid[row]}}">View</a>
                 </div>

@@ -35,7 +35,6 @@
                     <li class="nav-item">
                         <form class="form-inline" autocomplete="off" spellcheck="false" action="/home" method="POST">
                             <input type="text" class="form-control mr-2" placeholder="Search Product" name="search">
-                            <!-- <button class="btn btn-outline-light" type="submit" class="button">Search</button> -->
                         </form>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/logout"><span class="fa fa-sign-out fa-lg"></span>
@@ -55,10 +54,15 @@
 
     <div class="container">
         <h2>{{title}}'s Product Details</h2>
-        <img src={{image}} style="display: block; max-width: 50%; height: auto; margin: auto;"><br>
-        Description = {{description}}<br>
-        Duration(if it is a movie): {{duration}}<br>
-        Price: S${{price}}<br>
+        <img src={{image}} style="display: block; max-width: 60%; height: auto; margin: auto;">
+        <hr>
+        <p>
+            <strong>Description</strong><br>
+            {{description}}<br><br>
+            <strong>Duration (if it is a movie)</strong><br>
+            {{duration}}<br><br>
+            <strong>Price</strong> S${{price}}<br>
+        </p>
         <button class="btn btn-success" id="addToCart" action="add_to_cart({{title}},{{price}})">Add to cart!</button>
         <div id="addToCartStatus"></div>
         <!-- {{text}} -->

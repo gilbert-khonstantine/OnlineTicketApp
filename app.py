@@ -664,6 +664,7 @@ def deduct():
 
 @app.route('/receipt')
 def receipt():
+    global paid
     global text
     if userID!=0:
         if paid:
@@ -682,7 +683,7 @@ def receipt():
             balance = user_info.token - float(result[1])
             user_info.token = float(balance)
             db.session.commit()
-
+            paid = False
             return render_template('receipt.html', user=user, cart=result[0], total=str("%.2f" % round(result[1],2)))
         else:
             text = "You do not have access to receipt before paying!"
