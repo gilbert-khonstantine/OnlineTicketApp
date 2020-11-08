@@ -23,8 +23,6 @@ def send_receipt(user):
     total = 0
     for item in cart:
         total = total + (float(item.cost) * float(item.quantity))
-    
-    #total = str("%.2f" % round(total,2))
 
     msg = Message('Purchase Receipt', sender = 'danieltechtips2006@gmail.com', recipients = ['danieltechtips2006@gmail.com'])
     msg.html = render_template('emailReceipt.html', name=user.name, cart=cart, total=str("%.2f" % round(total,2)))

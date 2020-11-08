@@ -7,7 +7,6 @@ def addHistory(user):
 
     try:
         for item in cart:
-            #no datetime yet
             itemToAdd = UserHist(user_id=user.id, product=item.product, quantity=item.quantity, cost=item.cost)
             db.session.add(itemToAdd)
 
