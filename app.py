@@ -642,6 +642,7 @@ def payment():
 
 @app.route('/deduct', methods=['POST','GET'])
 def deduct():
+    global paid
     global text
     if userID!=0:
         user = User.query.get(userID)
@@ -650,9 +651,11 @@ def deduct():
         price=total
         print("price = " + price)
         if user_info.token - float(price) < 0:
+            paid = False
             text = "Insufficient tokens, please top-up. Your total cart price is: S$" + total
             return {'msg':'failed'}
         else:
+            paid = True
             text="Tokens deducted"
             return {'msg':'success'}
     else:
@@ -663,23 +666,27 @@ def deduct():
 def receipt():
     global text
     if userID!=0:
-        user = User.query.get(userID)
-        user_info = UserInfo.query.get(userID)
+        if paid:
+            user = User.query.get(userID)
+            user_info = UserInfo.query.get(userID)
 
-        if add_to_history.addHistory(user):
-            result = send_email.send_receipt(user)
-            if add_to_history.deleteCart(user):
-                text="success"
+            if add_to_history.addHistory(user):
+                result = send_email.send_receipt(user)
+                if add_to_history.deleteCart(user):
+                    text="success"
+                else:
+                    text="delete not ok"
             else:
-                text="delete not ok"
+                text="adding not ok"
+
+            balance = user_info.token - float(result[1])
+            user_info.token = float(balance)
+            db.session.commit()
+
+            return render_template('receipt.html', user=user, cart=result[0], total=str("%.2f" % round(result[1],2)))
         else:
-            text="adding not ok"
-
-        balance = user_info.token - float(result[1])
-        user_info.token = float(balance)
-        db.session.commit()
-
-        return render_template('receipt.html', user=user, cart=result[0], total=str("%.2f" % round(result[1],2)))
+            text = "You do not have access to receipt before paying!"
+            return redirect("/home")
     else:
         text = "Please login to an account!"
         return redirect('/login')
@@ -693,4 +700,6 @@ if __name__ == "__main__":
     twofa = ""
     #Create variable to hold total new funds
     total = 0
+    #Create variable to grant access to receipt page
+    paid = False
     app.run(debug=True)
