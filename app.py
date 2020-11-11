@@ -287,7 +287,8 @@ def profile():
             new_details = (new_name,new_email,new_age,new_address,new_mobile)
             user_email = user.email
             fail = False
-            fail = verify_profile.check_account(fail,new_details,user_email)
+            fail = verify_profile.check_account(fail,new_details,user_email)[0]
+            text = verify_profile.check_account(fail,new_details,user_email)[1]
             if not fail:
                 try:
                     user.name = new_name
