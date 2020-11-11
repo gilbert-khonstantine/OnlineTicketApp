@@ -1,7 +1,7 @@
 # OnlineTicketApp
 /api contains all the backend files (classes) 
 
-/sql contains all the command after entering to mysql console
+/Scraping contains website scraping for tickets information
 
 /templates contains all the html file
 
