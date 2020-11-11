@@ -192,12 +192,12 @@
                                         <img class="img-fluid" style="width:400px;height:280px;"
                                             src={{fav[3*(i+1)+j].image_link}}>
                                         <div class="card-body">
-                                            <h5 class="card-title text-truncate">{{fav[3*(i+1)+j].title}}</h5>
+                                            <h5 class="carsd-title text-truncate">{{fav[3*(i+1)+j].title}}</h5>
                                             <h6 class="card-subtitle mb-2 text-muted">S${{fav[3*(i+1)+j].price}}</h6>
                                             <a href="#" class="card-link"
                                                 onclick='addToCart("{{fav[3*(i+1)+j].title}}","{{fav[3*(i+1)+j].price}}")'>Add
                                                 to cart</a>
-                                            <a href="/details/{{'fav_id:%d' %(3*(i+1)+j)}}"
+                                            <a href="/details/{{fav[(3*(i+1)+j)].id}}"
                                                 id={{"fav_id:%d" %(3*(i+1)+j)}}
                                                 onclick="updateViewCount({{fav[3*(i+1)+j].id}})"
                                                 class="card-link">View</a>
