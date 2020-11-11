@@ -333,7 +333,7 @@ def change_password():
                             user.password = encrypted_password
                             db.session.commit()
                             text = "Password changed successfully"
-                            return render_template('profile.html', text=text)
+                            return redirect('/profile')
                         else:
                             text = "Password must contain at least 1 Integer, 1 uppercase letter, 1 lowercase letter, 1 special character and must be of length more than 8"
                             return render_template('changePassword.html', text=text)
