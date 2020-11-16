@@ -8,27 +8,28 @@ def check_account(fail,new_details,user_email):
     new_address = new_details[3]
     new_mobile = new_details[4]
     fail = False
+    text = ""
     if len(new_name) == 0:
-        text = text + "Invalid username, new name not saved!\n"
+        text = "Invalid username, new name not saved!\n"
         fail = True
     if user_email != new_email:
         if not check_email(new_email):
-            text = text + "Invalid email, new email not saved!\n "
+            text = "Invalid email, new email not saved!\n "
             fail = True
     if new_age!="":
         try:
             new_age = int(new_age)
             if not (new_age >= 0 and new_age <= 100): #Acceptable age is 0 to 100
-                text = text + "Invalid age, new age not saved!\n "
+                text = "Invalid age, new age not saved!\n "
                 fail = True
         except:
-            text = text + "Invalid age, new age not saved!\n "
+            text = "Invalid age, new age not saved!\n "
             fail = True
     if new_mobile!="":
         try:
             int(new_mobile)
         except:
-            text = text + "Invalid mobile, new mobile not saved!\n"
+            text = "Invalid mobile, new mobile not saved!\n"
             fail = True
     
-    return fail
+    return (fail, text)

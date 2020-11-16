@@ -197,7 +197,7 @@
                                             <a href="#" class="card-link"
                                                 onclick='addToCart("{{fav[3*(i+1)+j].title}}","{{fav[3*(i+1)+j].price}}")'>Add
                                                 to cart</a>
-                                            <a href="/details/{{'fav_id:%d' %(3*(i+1)+j)}}"
+                                            <a href="/details/{{fav[(3*(i+1)+j)].id}}"
                                                 id={{"fav_id:%d" %(3*(i+1)+j)}}
                                                 onclick="updateViewCount({{fav[3*(i+1)+j].id}})"
                                                 class="card-link">View</a>
