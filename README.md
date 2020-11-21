@@ -10,9 +10,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 app.py is the main driver of the app
 
-/api contains all the backend files (classes) 
+/api contains all the backend files (classes)
+
 /Scraping contains website scraping for tickets information
+
 /templates contains all the html file
+
 /static contains css
 
 ### Prerequisites and Installation of pip modules
