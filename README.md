@@ -33,12 +33,12 @@ pip install flask flask_sqlalchemy flask_mail flask_cors sqlalchemy autocorrect
 
 Our current application is placed in the "OnlineTicketApp" folder. To run the application (using commandprompt):
 1) Ensure that all dependencies are installed.
-2) In commandprompt, change the working directory to where app.py is located. The working directory can be found by app.py -> Properties -> Location
-3) Run application by typing this into the command prompt line: 
+2) In Command Prompt, change the working directory to where app.py is located. The working directory can be found by app.py -> Properties -> Location
+3) Run application by typing this into the Command Prompt line: 
 ```
 python app.py
 ```
-4) If successfully launched, cmd should display something like this: 
+4) If successfully launched, Command Prompt should display something like this: 
 ```
 Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 ```
@@ -48,7 +48,7 @@ Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 
 After deploying the application, unit testing can be done.
 1) Run application
-2) Run test by typing this into the commandprompt line:
+2) Run test by typing this into the Command Prompt line:
 ```
 python app_test.py
 ```
